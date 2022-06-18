@@ -3,7 +3,8 @@
 
 pub const MAX_TEAMS: usize = 100; 
 
-pub enum Weekday { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday };
+#[derive(Debug, Clone, PartialEq)]
+pub enum Weekday { Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TeamInfo {
@@ -23,11 +24,11 @@ impl Teams {
 
         let mut teams = Vec::with_capacity(MAX_TEAMS);
 
-        
+
 
         let team = TeamInfo {
-            teamid: "Test1".to_string(),
-            teamsize: 32,
+            team_id: "Test1".to_string(),
+            team_size: 32,
             first_pref: Weekday::Thursday,
             second_pref: Weekday::Tuesday,
         };

@@ -25,7 +25,7 @@ fn find_optimal_seating(seats: u32, filepath: String) -> u8 {
         filepath
     );
 
-    let teams = Teams::from_csv_file(filename);
+    let teams = Teams::from_csv_file(filepath);
 
     0
 }
