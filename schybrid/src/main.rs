@@ -13,16 +13,16 @@ struct Args {
     #[clap(short, long, value_parser)]
     seats: u32,
 
-    /// CSV Filename/path with team info
+    /// CSV filepath with team info
     #[clap(short, long, value_parser)]
-    filename: String,
+    filepath: String,
 }
 
 // Worker function
-fn find_optimal_seating(seats: u32, filename: String) -> u8 {
+fn find_optimal_seating(seats: u32, filepath: String) -> u8 {
     println!("Finding optimal seating for {} seats using teams info from {}",
         seats,
-        filename
+        filepath
     );
 
     let teams = Teams::from_csv_file(filename);
@@ -33,5 +33,5 @@ fn find_optimal_seating(seats: u32, filename: String) -> u8 {
 fn main() {
     let args = Args::parse();
 
-    find_optimal_seating(args.seats, args.filename);
+    find_optimal_seating(args.seats, args.filepath);
 }
