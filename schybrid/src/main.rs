@@ -1,6 +1,7 @@
-/// Copyright (c) 2022 Shreepad Shukla
+// Copyright (c) 2022 Shreepad Shukla
 // SPDX-License-Identifier: AGPL-3.0-only
 use clap::Parser;
+use teams_info::Teams;
 
 // Setup the command line arguments and help using Clap
 
@@ -17,8 +18,15 @@ struct Args {
     filename: String,
 }
 
+// Worker function
 fn find_optimal_seating(seats: u32, filename: String) -> u8 {
-    println!("Finding optimal seating");
+    println!("Finding optimal seating for {} seats using teams info from {}",
+        seats,
+        filename
+    );
+
+    let teams = Teams::from_csv_file(filename);
+
     0
 }
 

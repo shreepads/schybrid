@@ -2,6 +2,7 @@
 
 members = [
     "schybrid",
+    "teams_info",
 ]
 
 default-members = ["schybrid",]
