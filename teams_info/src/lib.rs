@@ -164,4 +164,25 @@ mod tests {
         assert_eq!(teams.teams_info.len(), 6);
         assert_eq!(teams.combinations, 64);
     }
+
+
+    #[test]
+    fn check_all_combinations() {
+        let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-tiny.csv"));
+        assert!(result.is_ok());
+        let teams = result.unwrap();
+        assert_eq!(teams.teams_info.len(), 3);
+        assert_eq!(teams.combinations, 8);
+
+        // All teams at first pref
+        let result = teams.prefseatcount_for_combination(
+            0,
+            5
+        );
+        assert_eq!(result, 12);
+
+    }
+
+
+
 }
