@@ -180,5 +180,10 @@ mod tests {
         // All teams at first pref
         let result = teams.prefseatcount_for_combination(0, 5);
         assert_eq!(result, 12);
+
+        // All teams at second pref
+        let result = teams.prefseatcount_for_combination(7, 20);
+        assert_eq!(result, 0);
+        
     }
 }
