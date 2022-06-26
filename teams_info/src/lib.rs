@@ -1,22 +1,31 @@
 // Copyright (c) 2022 Shreepad Shukla
 // SPDX-License-Identifier: AGPL-3.0-only
 
-use std::fs::File;
 use std::error::Error;
+use std::fs::File;
 
 use csv::Reader;
 
-pub const MAX_TEAMS: usize = 64; 
+pub const MAX_TEAMS: usize = 64;
 
 // Weekdays enum and array for iteration, order matches the CSV template
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub enum Weekday { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Error }
-pub const WEEKDAYS : [Weekday; 7] = [
-    Weekday::Sunday, 
-    Weekday::Monday, 
-    Weekday::Tuesday, 
-    Weekday::Wednesday, 
-    Weekday::Thursday, 
+pub enum Weekday {
+    Sunday,
+    Monday,
+    Tuesday,
+    Wednesday,
+    Thursday,
+    Friday,
+    Saturday,
+    Error,
+}
+pub const WEEKDAYS: [Weekday; 7] = [
+    Weekday::Sunday,
+    Weekday::Monday,
+    Weekday::Tuesday,
+    Weekday::Wednesday,
+    Weekday::Thursday,
     Weekday::Friday,
     Weekday::Saturday,
 ];
@@ -37,7 +46,6 @@ pub struct Teams {
 
 impl Teams {
     pub fn from_csv_file(file_path: String) -> Result<Teams, Box<dyn Error>> {
-
         let mut teams_info = Vec::with_capacity(MAX_TEAMS);
 
         let file = File::open(file_path)?;
@@ -57,16 +65,16 @@ impl Teams {
 
             for weekday in WEEKDAYS {
                 let weekday_pref = fields.next().unwrap();
-                
+
                 match weekday_pref {
                     "1" => first_pref = weekday,
                     "2" => second_pref = weekday,
-                    _   => {},
+                    _ => {}
                 }
             }
 
             // Check if both prefs correctly matched
-            if first_pref == Weekday::Error  ||  second_pref == Weekday::Error {
+            if first_pref == Weekday::Error || second_pref == Weekday::Error {
                 println!("Erroneous record");
                 // TODO raise error
             }
@@ -82,7 +90,6 @@ impl Teams {
 
         let teams_count = teams_info.len() as u32;
 
-        
         Ok(Teams {
             teams_info,
             combinations: 2u64.pow(teams_count),
@@ -92,13 +99,12 @@ impl Teams {
     // Calculate the number of people who get their first preference in a given combination
     // Return 0 if the seat constraint is exceeded
     pub fn prefseatcount_for_combination(&self, combination: u64, seats: u64) -> u64 {
-
         // Combination 0 represents all teams in first pref
         // Combination self.combinations represents all teams in second pref
         // Least significant bit represents pref for first team in self.teams_info
 
         if combination >= self.combinations {
-            return 0
+            return 0;
         }
 
         // Accumulate seats count for all weekdays
@@ -110,14 +116,13 @@ impl Teams {
         let mut reduced_combination = combination;
 
         for team in self.teams_info.iter() {
-
             let team_size = team.team_size;
             let team_weekday = match reduced_combination % 2 {
                 0 => {
                     pref_seat_count += team_size;
-                    team.first_pref   // Least significant bit is 0, use first_pref
-                },
-                1 => team.second_pref,   // Least significant bit is 1, use second_pref
+                    team.first_pref // Least significant bit is 0, use first_pref
+                }
+                1 => team.second_pref, // Least significant bit is 1, use second_pref
                 _ => {
                     println!("Something has gone horribly wrong");
                     Weekday::Error
@@ -125,13 +130,13 @@ impl Teams {
             };
 
             match team_weekday {
-                Weekday::Sunday =>    seats_taken_by_weekday[0] += team_size,
-                Weekday::Monday =>    seats_taken_by_weekday[1] += team_size,
-                Weekday::Tuesday =>   seats_taken_by_weekday[2] += team_size,
+                Weekday::Sunday => seats_taken_by_weekday[0] += team_size,
+                Weekday::Monday => seats_taken_by_weekday[1] += team_size,
+                Weekday::Tuesday => seats_taken_by_weekday[2] += team_size,
                 Weekday::Wednesday => seats_taken_by_weekday[3] += team_size,
-                Weekday::Thursday =>  seats_taken_by_weekday[4] += team_size,
-                Weekday::Friday =>    seats_taken_by_weekday[5] += team_size,
-                Weekday::Saturday =>  seats_taken_by_weekday[6] += team_size,
+                Weekday::Thursday => seats_taken_by_weekday[4] += team_size,
+                Weekday::Friday => seats_taken_by_weekday[5] += team_size,
+                Weekday::Saturday => seats_taken_by_weekday[6] += team_size,
                 _ => println!("WTF"),
             }
 
@@ -148,7 +153,6 @@ impl Teams {
 
         pref_seat_count
     }
-
 }
 
 #[cfg(test)]
@@ -165,7 +169,6 @@ mod tests {
         assert_eq!(teams.combinations, 64);
     }
 
-
     #[test]
     fn check_all_combinations() {
         let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-tiny.csv"));
@@ -175,14 +178,7 @@ mod tests {
         assert_eq!(teams.combinations, 8);
 
         // All teams at first pref
-        let result = teams.prefseatcount_for_combination(
-            0,
-            5
-        );
+        let result = teams.prefseatcount_for_combination(0, 5);
         assert_eq!(result, 12);
-
     }
-
-
-
 }
