@@ -1,5 +1,8 @@
 // Copyright (c) 2022 Shreepad Shukla
 // SPDX-License-Identifier: AGPL-3.0-only
+
+use std::error::Error;
+
 use clap::Parser;
 use teams_info::Teams;
 
@@ -19,15 +22,19 @@ struct Args {
 }
 
 // Worker function
-fn find_optimal_seating(seats: u32, filepath: String) -> u8 {
+fn find_optimal_seating(seats: u32, filepath: String) -> Result<u8, Box<dyn Error>> {
     println!("Finding optimal seating for {} seats using teams info from {}",
         seats,
         filepath
     );
 
-    let teams = Teams::from_csv_file(filepath);
+    let teamsinfo = Teams::from_csv_file(filepath)?;
 
-    0
+    for team in teamsinfo.teams {
+        println!("Team: {:?}", team);
+    }
+
+    Ok(0)
 }
 
 fn main() {
