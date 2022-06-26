@@ -153,9 +153,15 @@ impl Teams {
 
 #[cfg(test)]
 mod tests {
+
+    use super::*;
+
     #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+    fn load_csv_file() {
+        let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-small.csv"));
+        assert!(result.is_ok());
+        let teams = result.unwrap();
+        assert_eq!(teams.teams_info.len(), 6);
+        assert_eq!(teams.combinations, 64);
     }
 }
