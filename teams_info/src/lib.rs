@@ -107,7 +107,7 @@ impl Teams {
     // Get the best valid combination by brute force
     pub fn get_best_valid_combination(&self, seats: u64) -> Option<Combination> {
         let mut best_first_pref_count = 0;
-        let mut best_combination = 0;
+        let mut best_combination_id = 0;
 
         // Check for best combination with given seats
         for combination_id in 0..self.combinations {
@@ -115,7 +115,7 @@ impl Teams {
                 if combination.min_seats_left >= 0 {
                     if combination.first_pref_count > best_first_pref_count {
                         //println!("Found better combination: {:?}", combination);
-                        best_combination = combination_id;
+                        best_combination_id = combination_id;
                         best_first_pref_count = combination.first_pref_count;
                     }
                 }
@@ -125,7 +125,14 @@ impl Teams {
             }
         }
 
-        Some(self.get_combination_by_id(best_combination, seats).unwrap())
+        let best_combination = self.get_combination_by_id(best_combination_id, seats).unwrap();
+
+        if best_combination.min_seats_left >= 0 {
+            Some(best_combination)
+        } else {
+            None
+        }
+        
     }
 
     // Calculate the number of people who get their first preference in a given combination
@@ -274,9 +281,12 @@ mod tests {
         let result = teams.get_best_valid_combination(7);
         assert!(result.is_some());
         let best_combination = result.unwrap();
-
         assert_eq!(best_combination.combination_id, 0);
         assert_eq!(best_combination.first_pref_count, 12);
+
+        // Check for no combination with 4 seats
+        let result = teams.get_best_valid_combination(4);
+        assert!(result.is_none());
     }
 
     #[test]
@@ -291,7 +301,6 @@ mod tests {
         let result = teams.get_best_valid_combination(21);
         assert!(result.is_some());
         let best_combination = result.unwrap();
-
         assert_eq!(best_combination.combination_id, 20);
         assert_eq!(best_combination.first_pref_count, 47);
 
@@ -299,7 +308,6 @@ mod tests {
         let result = teams.get_best_valid_combination(25);
         assert!(result.is_some());
         let best_combination = result.unwrap();
-
         assert_eq!(best_combination.combination_id, 17);
         assert_eq!(best_combination.first_pref_count, 49);
 
@@ -307,8 +315,12 @@ mod tests {
         let result = teams.get_best_valid_combination(26);
         assert!(result.is_some());
         let best_combination = result.unwrap();
-
         assert_eq!(best_combination.combination_id, 0);
         assert_eq!(best_combination.first_pref_count, 70);
+
+
+        // Check for no combination with 20 seats
+        let result = teams.get_best_valid_combination(20);
+        assert!(result.is_none());
     }
 }

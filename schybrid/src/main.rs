@@ -33,7 +33,7 @@ fn find_optimal_seating(seats: u64, filepath: String) -> Result<u8, Box<dyn Erro
 
     // Check for best combination with given seats
     if let Some(best_combination) = teams.get_best_valid_combination(seats) {
-        println!("The best combination is {:?}", best_combination);
+        println!("The best valid combination is {:?}", best_combination);
 
         // Get the schedule for the best combination
         let best_sched = TeamsSchedule::new(teams, best_combination, seats);
@@ -50,5 +50,5 @@ fn find_optimal_seating(seats: u64, filepath: String) -> Result<u8, Box<dyn Erro
 fn main() {
     let args = Args::parse();
 
-    find_optimal_seating(args.seats, args.filepath);
+    _ = find_optimal_seating(args.seats, args.filepath);
 }
