@@ -122,7 +122,7 @@ impl Teams {
         // Accumulate people who got their first pref
         let mut first_pref_count = 0;
         let mut second_pref_count = 0;
-        let mut min_seats_left = 0i64;
+        let mut min_seats_left = i64::MAX;
 
         let mut reduced_combination = combination;
 
@@ -161,6 +161,15 @@ impl Teams {
 
         for seats_taken in seats_taken_by_weekday.iter() {
             
+            let seats_left = if seats > *seats_taken {
+                (seats - *seats_taken) as i64
+            } else {
+                ((*seats_taken - seats) as i64) * -1
+            };
+            
+            if seats_left < min_seats_left {
+                min_seats_left = seats_left;
+            }
         }
 
         Ok(Combination {
