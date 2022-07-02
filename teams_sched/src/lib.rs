@@ -5,18 +5,18 @@ use std::error::Error;
 
 use csv::Writer;
 
-use teams_info::Teams;
 use teams_info::Combination;
+use teams_info::Teams;
 use teams_info::Weekday;
 
 pub const SCHED_DAY_RECORD: [[&str; 7]; 7] = [
-    ["Y","","","","","",""],
-    ["","Y","","","","",""],
-    ["","","Y","","","",""],
-    ["","","","Y","","",""],
-    ["","","","","Y","",""],
-    ["","","","","","Y",""],
-    ["","","","","","","Y"],
+    ["Y", "", "", "", "", "", ""],
+    ["", "Y", "", "", "", "", ""],
+    ["", "", "Y", "", "", "", ""],
+    ["", "", "", "Y", "", "", ""],
+    ["", "", "", "", "Y", "", ""],
+    ["", "", "", "", "", "Y", ""],
+    ["", "", "", "", "", "", "Y"],
 ];
 
 #[derive(Debug, Clone, PartialEq)]
@@ -27,7 +27,6 @@ pub struct TeamsSchedule {
 }
 
 impl TeamsSchedule {
-
     pub fn new(teams: Teams, combination: Combination, seats: u64) -> TeamsSchedule {
         TeamsSchedule {
             combination,
@@ -37,10 +36,19 @@ impl TeamsSchedule {
     }
 
     pub fn to_csv_file(&self, file_path: String) -> Result<(), Box<dyn Error>> {
-
         let mut wtr = Writer::from_path(file_path)?;
 
-        wtr.write_record(&["Teamid", "Teamsize", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"])?;
+        wtr.write_record(&[
+            "Teamid",
+            "Teamsize",
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+        ])?;
 
         // Accumulate seats count for all weekdays
         let mut seats_taken_by_weekday: [u64; 7] = [0; 7];
@@ -48,7 +56,6 @@ impl TeamsSchedule {
         let mut reduced_combination = self.combination.combination_id;
 
         for team in self.teams.teams_info.iter() {
-            
             let mut record = vec![team.team_id.to_string(), team.team_size.to_string()];
 
             let team_weekday = match reduced_combination % 2 {
@@ -65,44 +72,41 @@ impl TeamsSchedule {
             };
 
             let team_sched_record = match team_weekday {
-                Weekday::Sunday =>    {
+                Weekday::Sunday => {
                     seats_taken_by_weekday[0] += team.team_size;
                     SCHED_DAY_RECORD[0]
-                },
-                Weekday::Monday =>    {
+                }
+                Weekday::Monday => {
                     seats_taken_by_weekday[1] += team.team_size;
                     SCHED_DAY_RECORD[1]
-                },
-                Weekday::Tuesday =>   {
+                }
+                Weekday::Tuesday => {
                     seats_taken_by_weekday[2] += team.team_size;
                     SCHED_DAY_RECORD[2]
-                },
+                }
                 Weekday::Wednesday => {
                     seats_taken_by_weekday[3] += team.team_size;
                     SCHED_DAY_RECORD[3]
-                },
-                Weekday::Thursday =>  {
+                }
+                Weekday::Thursday => {
                     seats_taken_by_weekday[4] += team.team_size;
                     SCHED_DAY_RECORD[4]
-                },
-                Weekday::Friday =>    {
+                }
+                Weekday::Friday => {
                     seats_taken_by_weekday[5] += team.team_size;
                     SCHED_DAY_RECORD[5]
-                },
-                Weekday::Saturday =>  {
+                }
+                Weekday::Saturday => {
                     seats_taken_by_weekday[6] += team.team_size;
                     SCHED_DAY_RECORD[6]
-                },
+                }
                 _ => {
                     println!("WTF");
-                    ["","","","","","",""]
+                    ["", "", "", "", "", "", ""]
                 }
             };
 
-            record.append(&mut team_sched_record.iter()
-                .map(|x| x.to_string())
-                .collect()
-            );
+            record.append(&mut team_sched_record.iter().map(|x| x.to_string()).collect());
 
             wtr.write_record(&record)?;
 
@@ -110,7 +114,6 @@ impl TeamsSchedule {
 
             reduced_combination = reduced_combination >> 1;
         }
-        
 
         // Write trailer row with free seats
 

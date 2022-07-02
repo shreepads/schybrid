@@ -43,9 +43,8 @@ pub struct Combination {
     pub combination_id: u64,
     pub first_pref_count: u64,
     pub second_pref_count: u64,
-    pub min_seats_left: i64,      // Min number of seats left
+    pub min_seats_left: i64, // Min number of seats left
 }
-
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Teams {
@@ -105,16 +104,13 @@ impl Teams {
         })
     }
 
-
     // Get the best valid combination by brute force
     pub fn get_best_valid_combination(&self, seats: u64) -> Option<Combination> {
-
         let mut best_first_pref_count = 0;
         let mut best_combination = 0;
 
         // Check for best combination with given seats
         for combination_id in 0..self.combinations {
-            
             if let Ok(combination) = self.get_combination_by_id(combination_id, seats) {
                 if combination.min_seats_left >= 0 {
                     if combination.first_pref_count > best_first_pref_count {
@@ -122,9 +118,7 @@ impl Teams {
                         best_combination = combination_id;
                         best_first_pref_count = combination.first_pref_count;
                     }
-    
                 }
-    
             } else {
                 println!("Something's not right");
                 return None;
@@ -132,12 +126,15 @@ impl Teams {
         }
 
         Some(self.get_combination_by_id(best_combination, seats).unwrap())
-
     }
 
     // Calculate the number of people who get their first preference in a given combination
     // Return 0 if the seat constraint is exceeded
-    pub fn get_combination_by_id(&self, combination: u64, seats: u64) -> Result<Combination, &'static str> {
+    pub fn get_combination_by_id(
+        &self,
+        combination: u64,
+        seats: u64,
+    ) -> Result<Combination, &'static str> {
         // Combination 0 represents all teams in first pref
         // Combination self.combinations represents all teams in second pref
         // Least significant bit represents pref for first team in self.teams_info
@@ -190,13 +187,12 @@ impl Teams {
         }
 
         for seats_taken in seats_taken_by_weekday.iter() {
-            
             let seats_left = if seats > *seats_taken {
                 (seats - *seats_taken) as i64
             } else {
                 ((*seats_taken - seats) as i64) * -1
             };
-            
+
             if seats_left < min_seats_left {
                 min_seats_left = seats_left;
             }
@@ -206,7 +202,7 @@ impl Teams {
             combination_id: combination,
             first_pref_count,
             second_pref_count,
-            min_seats_left,      // Min number of seats left
+            min_seats_left, // Min number of seats left
         })
     }
 }
@@ -264,7 +260,6 @@ mod tests {
         assert_eq!(combination.first_pref_count, 0);
         assert_eq!(combination.second_pref_count, 12);
         assert_eq!(combination.min_seats_left, 2);
-
     }
 
     #[test]
@@ -282,7 +277,6 @@ mod tests {
 
         assert_eq!(best_combination.combination_id, 0);
         assert_eq!(best_combination.first_pref_count, 12);
-
     }
 
     #[test]
@@ -293,7 +287,6 @@ mod tests {
         assert_eq!(teams.teams_info.len(), 6);
         assert_eq!(teams.combinations, 64);
 
-
         // Check for best combination with 21 seats
         let result = teams.get_best_valid_combination(21);
         assert!(result.is_some());
@@ -301,7 +294,6 @@ mod tests {
 
         assert_eq!(best_combination.combination_id, 20);
         assert_eq!(best_combination.first_pref_count, 47);
-
 
         // Check for best combination with 25 seats
         let result = teams.get_best_valid_combination(25);
@@ -311,7 +303,6 @@ mod tests {
         assert_eq!(best_combination.combination_id, 17);
         assert_eq!(best_combination.first_pref_count, 49);
 
-
         // Check for best combination with 26 seats
         let result = teams.get_best_valid_combination(26);
         assert!(result.is_some());
@@ -319,10 +310,5 @@ mod tests {
 
         assert_eq!(best_combination.combination_id, 0);
         assert_eq!(best_combination.first_pref_count, 70);
-        
-
     }
-
-
-
 }
