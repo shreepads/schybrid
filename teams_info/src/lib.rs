@@ -284,4 +284,45 @@ mod tests {
         assert_eq!(best_combination.first_pref_count, 12);
 
     }
+
+    #[test]
+    fn check_best_valid_small_combinations() {
+        let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-small.csv"));
+        assert!(result.is_ok());
+        let teams = result.unwrap();
+        assert_eq!(teams.teams_info.len(), 6);
+        assert_eq!(teams.combinations, 64);
+
+
+        // Check for best combination with 21 seats
+        let result = teams.get_best_valid_combination(21);
+        assert!(result.is_some());
+        let best_combination = result.unwrap();
+
+        assert_eq!(best_combination.combination_id, 20);
+        assert_eq!(best_combination.first_pref_count, 47);
+
+
+        // Check for best combination with 25 seats
+        let result = teams.get_best_valid_combination(25);
+        assert!(result.is_some());
+        let best_combination = result.unwrap();
+
+        assert_eq!(best_combination.combination_id, 17);
+        assert_eq!(best_combination.first_pref_count, 49);
+
+
+        // Check for best combination with 26 seats
+        let result = teams.get_best_valid_combination(26);
+        assert!(result.is_some());
+        let best_combination = result.unwrap();
+
+        assert_eq!(best_combination.combination_id, 0);
+        assert_eq!(best_combination.first_pref_count, 70);
+        
+
+    }
+
+
+
 }
