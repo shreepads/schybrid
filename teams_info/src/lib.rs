@@ -32,10 +32,10 @@ pub const WEEKDAYS: [Weekday; 7] = [
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct TeamInfo {
-    team_id: String,
-    team_size: u64,
-    first_pref: Weekday,
-    second_pref: Weekday,
+    pub team_id: String,
+    pub team_size: u64,
+    pub first_pref: Weekday,
+    pub second_pref: Weekday,
 }
 
 #[derive(Debug, Clone, PartialEq)]
