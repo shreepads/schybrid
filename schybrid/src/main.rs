@@ -30,10 +30,6 @@ fn find_optimal_seating(seats: u64, filepath: String) -> Result<u8, Box<dyn Erro
 
     let teams = Teams::from_csv_file(filepath)?;
 
-    for team in teams.teams_info.iter() {
-        println!("Team: {:?}", team);
-    }
-
     // Check for best combination with given seats
     if let Some(combination) = teams.get_best_valid_combination(seats) {
         println!("The best combination is {:?}", combination);
