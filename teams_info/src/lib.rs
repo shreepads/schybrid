@@ -236,4 +236,36 @@ mod tests {
         assert_eq!(combination.min_seats_left, 2);
 
     }
+
+    #[test]
+    fn check_best_valid_tiny_combination() {
+        let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-tiny.csv"));
+        assert!(result.is_ok());
+        let teams = result.unwrap();
+        assert_eq!(teams.teams_info.len(), 3);
+        assert_eq!(teams.combinations, 8);
+
+        let mut best_first_pref_count = 0;
+        let mut best_combination = 0;
+
+        // Check for best combination with 7 seats
+        for combination_id in 0..teams.combinations {
+            let result = teams.prefseatcount_for_combination(combination_id, 7);
+            assert!(result.is_ok());
+            let combination = result.unwrap();
+
+            if combination.min_seats_left >= 0 {
+                if combination.first_pref_count > best_first_pref_count {
+                    println!("Found better combination: {:?}", combination);
+                    best_combination = combination_id;
+                    best_first_pref_count = combination.first_pref_count;
+                }
+
+            }
+        }
+
+        assert_eq!(best_combination, 0);
+        assert_eq!(best_first_pref_count, 12);
+
+    }
 }
