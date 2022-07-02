@@ -38,6 +38,9 @@ fn find_optimal_seating(seats: u64, filepath: String) -> Result<u8, Box<dyn Erro
         // Get the schedule for the best combination
         let best_sched = TeamsSchedule::new(teams, best_combination, seats);
 
+        // Write to CSV
+        best_sched.to_csv_file("./schedule.csv".to_string());
+
     } else {
         println!("There is no valid combination");
     }
