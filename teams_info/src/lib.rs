@@ -62,7 +62,7 @@ impl Teams {
 
         for result in rdr.records() {
             let record = result?;
-            println!("{:?}", record);
+            //println!("{:?}", record);
 
             let mut fields = record.iter();
 
@@ -105,9 +105,39 @@ impl Teams {
         })
     }
 
+
+    // Get the best valid combination by brute force
+    pub fn get_best_valid_combination(&self, seats: u64) -> Option<Combination> {
+
+        let mut best_first_pref_count = 0;
+        let mut best_combination = 0;
+
+        // Check for best combination with given seats
+        for combination_id in 0..self.combinations {
+            
+            if let Ok(combination) = self.get_combination_by_id(combination_id, seats) {
+                if combination.min_seats_left >= 0 {
+                    if combination.first_pref_count > best_first_pref_count {
+                        //println!("Found better combination: {:?}", combination);
+                        best_combination = combination_id;
+                        best_first_pref_count = combination.first_pref_count;
+                    }
+    
+                }
+    
+            } else {
+                println!("Something's not right");
+                return None;
+            }
+        }
+
+        Some(self.get_combination_by_id(best_combination, seats).unwrap())
+
+    }
+
     // Calculate the number of people who get their first preference in a given combination
     // Return 0 if the seat constraint is exceeded
-    pub fn prefseatcount_for_combination(&self, combination: u64, seats: u64) -> Result<Combination, &'static str> {
+    pub fn get_combination_by_id(&self, combination: u64, seats: u64) -> Result<Combination, &'static str> {
         // Combination 0 represents all teams in first pref
         // Combination self.combinations represents all teams in second pref
         // Least significant bit represents pref for first team in self.teams_info
@@ -204,7 +234,7 @@ mod tests {
         assert_eq!(teams.combinations, 8);
 
         // All teams at first pref, 5 seats
-        let result = teams.prefseatcount_for_combination(0, 5);
+        let result = teams.get_combination_by_id(0, 5);
         assert!(result.is_ok());
         let combination = result.unwrap();
         assert_eq!(combination.first_pref_count, 12);
@@ -212,7 +242,7 @@ mod tests {
         assert_eq!(combination.min_seats_left, -2);
 
         // All teams at second pref, 5 seats
-        let result = teams.prefseatcount_for_combination(7, 5);
+        let result = teams.get_combination_by_id(7, 5);
         assert!(result.is_ok());
         let combination = result.unwrap();
         assert_eq!(combination.first_pref_count, 0);
@@ -220,7 +250,7 @@ mod tests {
         assert_eq!(combination.min_seats_left, -3);
 
         // All teams at first pref, 10 seats
-        let result = teams.prefseatcount_for_combination(0, 10);
+        let result = teams.get_combination_by_id(0, 10);
         assert!(result.is_ok());
         let combination = result.unwrap();
         assert_eq!(combination.first_pref_count, 12);
@@ -228,7 +258,7 @@ mod tests {
         assert_eq!(combination.min_seats_left, 3);
 
         // All teams at second pref, 10 seats
-        let result = teams.prefseatcount_for_combination(7, 10);
+        let result = teams.get_combination_by_id(7, 10);
         assert!(result.is_ok());
         let combination = result.unwrap();
         assert_eq!(combination.first_pref_count, 0);
@@ -245,27 +275,13 @@ mod tests {
         assert_eq!(teams.teams_info.len(), 3);
         assert_eq!(teams.combinations, 8);
 
-        let mut best_first_pref_count = 0;
-        let mut best_combination = 0;
-
         // Check for best combination with 7 seats
-        for combination_id in 0..teams.combinations {
-            let result = teams.prefseatcount_for_combination(combination_id, 7);
-            assert!(result.is_ok());
-            let combination = result.unwrap();
+        let result = teams.get_best_valid_combination(7);
+        assert!(result.is_some());
+        let best_combination = result.unwrap();
 
-            if combination.min_seats_left >= 0 {
-                if combination.first_pref_count > best_first_pref_count {
-                    println!("Found better combination: {:?}", combination);
-                    best_combination = combination_id;
-                    best_first_pref_count = combination.first_pref_count;
-                }
-
-            }
-        }
-
-        assert_eq!(best_combination, 0);
-        assert_eq!(best_first_pref_count, 12);
+        assert_eq!(best_combination.combination_id, 0);
+        assert_eq!(best_combination.first_pref_count, 12);
 
     }
 }
