@@ -42,6 +42,9 @@ impl TeamsSchedule {
 
         wtr.write_record(&["Teamid", "Teamsize", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"])?;
 
+        // Accumulate seats count for all weekdays
+        let mut seats_taken_by_weekday: [u64; 7] = [0; 7];
+
         let mut reduced_combination = self.combination.combination_id;
 
         for team in self.teams.teams_info.iter() {
@@ -62,16 +65,37 @@ impl TeamsSchedule {
             };
 
             let team_sched_record = match team_weekday {
-                Weekday::Sunday =>    SCHED_DAY_RECORD[0],
-                Weekday::Monday =>    SCHED_DAY_RECORD[1],
-                Weekday::Tuesday =>   SCHED_DAY_RECORD[2],
-                Weekday::Wednesday => SCHED_DAY_RECORD[3],
-                Weekday::Thursday =>  SCHED_DAY_RECORD[4],
-                Weekday::Friday =>    SCHED_DAY_RECORD[5],
-                Weekday::Saturday =>  SCHED_DAY_RECORD[6],
+                Weekday::Sunday =>    {
+                    seats_taken_by_weekday[0] += team.team_size;
+                    SCHED_DAY_RECORD[0]
+                },
+                Weekday::Monday =>    {
+                    seats_taken_by_weekday[1] += team.team_size;
+                    SCHED_DAY_RECORD[1]
+                },
+                Weekday::Tuesday =>   {
+                    seats_taken_by_weekday[2] += team.team_size;
+                    SCHED_DAY_RECORD[2]
+                },
+                Weekday::Wednesday => {
+                    seats_taken_by_weekday[3] += team.team_size;
+                    SCHED_DAY_RECORD[3]
+                },
+                Weekday::Thursday =>  {
+                    seats_taken_by_weekday[4] += team.team_size;
+                    SCHED_DAY_RECORD[4]
+                },
+                Weekday::Friday =>    {
+                    seats_taken_by_weekday[5] += team.team_size;
+                    SCHED_DAY_RECORD[5]
+                },
+                Weekday::Saturday =>  {
+                    seats_taken_by_weekday[6] += team.team_size;
+                    SCHED_DAY_RECORD[6]
+                },
                 _ => {
                     println!("WTF");
-                    ["Y","","","","","",""]
+                    ["","","","","","",""]
                 }
             };
 
@@ -87,6 +111,16 @@ impl TeamsSchedule {
             reduced_combination = reduced_combination >> 1;
         }
         
+
+        // Write trailer row with free seats
+
+        let mut trailer_record = vec!["Freeseats".to_string(), "".to_string()];
+
+        for seats_taken in seats_taken_by_weekday {
+            trailer_record.push((self.seats - seats_taken).to_string());
+        }
+
+        wtr.write_record(&trailer_record)?;
 
         wtr.flush()?;
         Ok(())
