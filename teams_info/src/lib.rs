@@ -187,7 +187,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn load_csv_file() {
+    fn load_small_csv_file() {
         let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-small.csv"));
         assert!(result.is_ok());
         let teams = result.unwrap();
@@ -196,24 +196,44 @@ mod tests {
     }
 
     #[test]
-    fn check_all_combinations() {
+    fn check_some_tiny_combinations() {
         let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-tiny.csv"));
         assert!(result.is_ok());
         let teams = result.unwrap();
         assert_eq!(teams.teams_info.len(), 3);
         assert_eq!(teams.combinations, 8);
 
-        // All teams at first pref
+        // All teams at first pref, 5 seats
         let result = teams.prefseatcount_for_combination(0, 5);
         assert!(result.is_ok());
         let combination = result.unwrap();
         assert_eq!(combination.first_pref_count, 12);
+        assert_eq!(combination.second_pref_count, 0);
+        assert_eq!(combination.min_seats_left, -2);
 
-        // All teams at second pref
-        let result = teams.prefseatcount_for_combination(7, 20);
+        // All teams at second pref, 5 seats
+        let result = teams.prefseatcount_for_combination(7, 5);
         assert!(result.is_ok());
         let combination = result.unwrap();
         assert_eq!(combination.first_pref_count, 0);
-        
+        assert_eq!(combination.second_pref_count, 12);
+        assert_eq!(combination.min_seats_left, -3);
+
+        // All teams at first pref, 10 seats
+        let result = teams.prefseatcount_for_combination(0, 10);
+        assert!(result.is_ok());
+        let combination = result.unwrap();
+        assert_eq!(combination.first_pref_count, 12);
+        assert_eq!(combination.second_pref_count, 0);
+        assert_eq!(combination.min_seats_left, 3);
+
+        // All teams at second pref, 10 seats
+        let result = teams.prefseatcount_for_combination(7, 10);
+        assert!(result.is_ok());
+        let combination = result.unwrap();
+        assert_eq!(combination.first_pref_count, 0);
+        assert_eq!(combination.second_pref_count, 12);
+        assert_eq!(combination.min_seats_left, 2);
+
     }
 }
