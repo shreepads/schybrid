@@ -5,6 +5,7 @@ use std::error::Error;
 
 use clap::Parser;
 use teams_info::Teams;
+use teams_sched::TeamsSchedule;
 
 // Setup the command line arguments and help using Clap
 
@@ -31,12 +32,16 @@ fn find_optimal_seating(seats: u64, filepath: String) -> Result<u8, Box<dyn Erro
     let teams = Teams::from_csv_file(filepath)?;
 
     // Check for best combination with given seats
-    if let Some(combination) = teams.get_best_valid_combination(seats) {
-        println!("The best combination is {:?}", combination);
+    if let Some(best_combination) = teams.get_best_valid_combination(seats) {
+        println!("The best combination is {:?}", best_combination);
+
+        // Get the schedule for the best combination
+        let best_sched = TeamsSchedule::new(teams, best_combination, seats);
 
     } else {
         println!("There is no valid combination");
     }
+
 
     Ok(0)
 }

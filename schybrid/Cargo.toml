@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 clap = { version = "3.2.1", features = ["derive"] }
 teams_info = { path = "../teams_info" }
+teams_sched = { path = "../teams_sched" }
