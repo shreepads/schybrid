@@ -37,20 +37,20 @@ fn find_optimal_seating(seats: u64, filepath: String) -> Result<u8, Box<dyn Erro
     println!("Team combinations: {}", teams.combinations);
 
     println!(
-        "Pref seats at combination 0: {}",
-        teams.prefseatcount_for_combination(0, seats)
+        "Pref seats at combination 0: {:?}",
+        teams.prefseatcount_for_combination(0, seats)?
     );
     println!(
-        "Pref seats at combination 1: {}",
-        teams.prefseatcount_for_combination(1, seats)
+        "Pref seats at combination 1: {:?}",
+        teams.prefseatcount_for_combination(1, seats)?
     );
     println!(
-        "Pref seats at combination 62: {}",
-        teams.prefseatcount_for_combination(62, seats)
+        "Pref seats at combination 62: {:?}",
+        teams.prefseatcount_for_combination(62, seats)?
     );
     println!(
-        "Pref seats at combination 63: {}",
-        teams.prefseatcount_for_combination(63, seats)
+        "Pref seats at combination 63: {:?}",
+        teams.prefseatcount_for_combination(63, seats)?
     );
 
     Ok(0)

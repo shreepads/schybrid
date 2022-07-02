@@ -39,6 +39,15 @@ pub struct TeamInfo {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub struct Combination {
+    combination_id: u64,
+    first_pref_count: u64,
+    second_pref_count: u64,
+    min_seats_left: i64,      // Min number of seats left
+}
+
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Teams {
     pub teams_info: Vec<TeamInfo>,
     pub combinations: u64,
@@ -98,20 +107,22 @@ impl Teams {
 
     // Calculate the number of people who get their first preference in a given combination
     // Return 0 if the seat constraint is exceeded
-    pub fn prefseatcount_for_combination(&self, combination: u64, seats: u64) -> u64 {
+    pub fn prefseatcount_for_combination(&self, combination: u64, seats: u64) -> Result<Combination, &'static str> {
         // Combination 0 represents all teams in first pref
         // Combination self.combinations represents all teams in second pref
         // Least significant bit represents pref for first team in self.teams_info
 
         if combination >= self.combinations {
-            return 0;
+            return Err("Invalid combination id");
         }
 
         // Accumulate seats count for all weekdays
         let mut seats_taken_by_weekday: [u64; 7] = [0; 7];
 
         // Accumulate people who got their first pref
-        let mut pref_seat_count = 0;
+        let mut first_pref_count = 0;
+        let mut second_pref_count = 0;
+        let mut min_seats_left = 0i64;
 
         let mut reduced_combination = combination;
 
@@ -119,10 +130,13 @@ impl Teams {
             let team_size = team.team_size;
             let team_weekday = match reduced_combination % 2 {
                 0 => {
-                    pref_seat_count += team_size;
+                    first_pref_count += team_size;
                     team.first_pref // Least significant bit is 0, use first_pref
                 }
-                1 => team.second_pref, // Least significant bit is 1, use second_pref
+                1 => {
+                    second_pref_count += team_size;
+                    team.second_pref // Least significant bit is 1, use second_pref
+                }
                 _ => {
                     println!("Something has gone horribly wrong");
                     Weekday::Error
@@ -146,12 +160,15 @@ impl Teams {
         }
 
         for seats_taken in seats_taken_by_weekday.iter() {
-            if *seats_taken > seats {
-                return 0;
-            }
+            
         }
 
-        pref_seat_count
+        Ok(Combination {
+            combination_id: combination,
+            first_pref_count,
+            second_pref_count,
+            min_seats_left,      // Min number of seats left
+        })
     }
 }
 
@@ -179,11 +196,15 @@ mod tests {
 
         // All teams at first pref
         let result = teams.prefseatcount_for_combination(0, 5);
-        assert_eq!(result, 12);
+        assert!(result.is_ok());
+        let combination = result.unwrap();
+        assert_eq!(combination.first_pref_count, 12);
 
         // All teams at second pref
         let result = teams.prefseatcount_for_combination(7, 20);
-        assert_eq!(result, 0);
+        assert!(result.is_ok());
+        let combination = result.unwrap();
+        assert_eq!(combination.first_pref_count, 0);
         
     }
 }
