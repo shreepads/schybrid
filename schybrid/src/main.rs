@@ -53,6 +53,30 @@ fn find_optimal_seating(seats: u64, filepath: String) -> Result<u8, Box<dyn Erro
         teams.prefseatcount_for_combination(63, seats)?
     );
 
+    let mut best_first_pref_count = 0;
+    let mut best_combination = 0;
+
+    // Check for best combination with given seats
+    for combination_id in 0..teams.combinations {
+        let result = teams.prefseatcount_for_combination(combination_id, seats);
+        assert!(result.is_ok());
+        let combination = result.unwrap();
+
+        if combination.min_seats_left >= 0 {
+            if combination.first_pref_count > best_first_pref_count {
+                println!("Found better valid combination: {:?}", combination);
+                best_combination = combination_id;
+                best_first_pref_count = combination.first_pref_count;
+            }
+
+        }
+    }
+
+    println!("The best combination is {} and gives {} people their first seat preference",
+        best_combination,
+        best_first_pref_count
+    );
+
     Ok(0)
 }
 

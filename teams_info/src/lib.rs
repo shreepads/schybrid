@@ -40,10 +40,10 @@ pub struct TeamInfo {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Combination {
-    combination_id: u64,
-    first_pref_count: u64,
-    second_pref_count: u64,
-    min_seats_left: i64,      // Min number of seats left
+    pub combination_id: u64,
+    pub first_pref_count: u64,
+    pub second_pref_count: u64,
+    pub min_seats_left: i64,      // Min number of seats left
 }
 
 
