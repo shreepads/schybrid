@@ -33,7 +33,7 @@ pub const WEEKDAYS: [Weekday; 7] = [
     Weekday::Saturday,
 ];
 
-#[wasm_bindgen]
+#[wasm_bindgen(inspectable)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct TeamInfo {
     team_id: String,           // String cannot be pub in wasm
@@ -62,7 +62,7 @@ impl TeamInfo {
 
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen(inspectable)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Combination {
     pub combination_id: u64,
@@ -71,7 +71,7 @@ pub struct Combination {
     pub min_seats_left: i64,      // Min number of seats left
 }
 
-#[wasm_bindgen]
+#[wasm_bindgen(inspectable)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Teams {
     teams_info: Vec<TeamInfo>,    // Vec cannot be pub in wasm

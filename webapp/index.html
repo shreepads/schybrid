@@ -26,7 +26,7 @@
 
             let teaminfo1 = new TeamInfo(team_id, team_size, first_pref, second_pref)
 
-            console.log(teaminfo1.team_id)
+            console.log(teaminfo1.toJSON())
 
             teams.add_team(teaminfo1)
 
@@ -43,9 +43,11 @@
 
             console.log(teams.combinations)
 
+            console.log(teams.toJSON())
+
             let best_combination = teams.get_best_valid_combination("24")
 
-            console.log(best_combination.combination_id)
+            console.log(best_combination.toJSON())
 
         </script>
     </body>
