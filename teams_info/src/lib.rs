@@ -143,6 +143,7 @@ impl Teams {
 impl Teams {
 
     // Construct empty Teams as WASM can't pass Vec
+    #[wasm_bindgen(constructor)]
     pub fn new() -> Teams {
         Teams {
             teams_info: vec!(),

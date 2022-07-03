@@ -4,26 +4,48 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
+        <title>Schybrid</title>
     </head>
     <body>
         <script type="module">
             import init, {
                 Weekday, 
                 Combination, 
-                TeamInfo
+                TeamInfo,
+                Teams,
             } from './pkg/teams_info.js'
 
             await init()
+
+            let teams = new Teams()
 
             let team_id = "Team1"
             let team_size = "23"
             let first_pref = Weekday.Monday
             let second_pref = Weekday.Thursday
 
-            let teaminfo = new TeamInfo(team_id, team_size, first_pref, second_pref)
+            let teaminfo1 = new TeamInfo(team_id, team_size, first_pref, second_pref)
 
-            console.log(teaminfo.team_id)
+            console.log(teaminfo1.team_id)
+
+            teams.add_team(teaminfo1)
+
+            console.log(teams.combinations)
+
+            team_id = "Team2"
+            team_size = "18"
+            first_pref = Weekday.Monday
+            second_pref = Weekday.Wednesday
+
+            let teaminfo2 = new TeamInfo(team_id, team_size, first_pref, second_pref)
+
+            teams.add_team(teaminfo2)
+
+            console.log(teams.combinations)
+
+            let best_combination = teams.get_best_valid_combination("24")
+
+            console.log(best_combination.combination_id)
 
         </script>
     </body>
