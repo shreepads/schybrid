@@ -5,10 +5,12 @@ use std::error::Error;
 use std::fs::File;
 
 use csv::Reader;
+use wasm_bindgen::prelude::*;
 
 pub const MAX_TEAMS: usize = 64;
 
 // Weekdays enum and array for iteration, order matches the CSV template
+#[wasm_bindgen]
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Weekday {
     Sunday,
@@ -30,14 +32,36 @@ pub const WEEKDAYS: [Weekday; 7] = [
     Weekday::Saturday,
 ];
 
+#[wasm_bindgen]
 #[derive(Debug, Clone, PartialEq)]
 pub struct TeamInfo {
-    pub team_id: String,
+    team_id: String,
     pub team_size: u64,
     pub first_pref: Weekday,
     pub second_pref: Weekday,
 }
 
+#[wasm_bindgen]
+impl TeamInfo {
+
+    #[wasm_bindgen(constructor)]
+    pub fn new(team_id: String, team_size: u64, first_pref: Weekday, second_pref: Weekday) -> TeamInfo {
+        TeamInfo {
+            team_id,
+            team_size,
+            first_pref,
+            second_pref,
+        }
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn team_id(&self) -> String {
+        self.team_id.clone()
+    }
+
+}
+
+#[wasm_bindgen]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Combination {
     pub combination_id: u64,
