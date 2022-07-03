@@ -3,6 +3,7 @@
 
 use std::error::Error;
 use std::fs::File;
+use std::slice::Iter;
 
 use csv::Reader;
 use wasm_bindgen::prelude::*;
@@ -35,7 +36,7 @@ pub const WEEKDAYS: [Weekday; 7] = [
 #[wasm_bindgen]
 #[derive(Debug, Clone, PartialEq)]
 pub struct TeamInfo {
-    team_id: String,
+    team_id: String,           // String cannot be pub in wasm
     pub team_size: u64,
     pub first_pref: Weekday,
     pub second_pref: Weekday,
@@ -67,15 +68,17 @@ pub struct Combination {
     pub combination_id: u64,
     pub first_pref_count: u64,
     pub second_pref_count: u64,
-    pub min_seats_left: i64, // Min number of seats left
+    pub min_seats_left: i64,      // Min number of seats left
 }
 
+#[wasm_bindgen]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Teams {
-    pub teams_info: Vec<TeamInfo>,
+    teams_info: Vec<TeamInfo>,    // Vec cannot be pub in wasm
     pub combinations: u64,
 }
 
+// Non WASM implementations
 impl Teams {
     pub fn from_csv_file(file_path: String) -> Result<Teams, Box<dyn Error>> {
         let mut teams_info = Vec::with_capacity(MAX_TEAMS);
@@ -128,6 +131,33 @@ impl Teams {
         })
     }
 
+    // The teams_info Vec can't be public for wasm
+    pub fn teams_info_iter(&self) -> Iter<'_, TeamInfo> {
+        self.teams_info.iter()
+    }
+
+}
+
+// WASM implementations
+#[wasm_bindgen]
+impl Teams {
+
+    // Construct empty Teams as WASM can't pass Vec
+    pub fn new() -> Teams {
+        Teams {
+            teams_info: vec!(),
+            combinations: 0,
+        }
+    }
+
+    // Add one team at a time as WASM can't pass Vec
+    pub fn add_team(&mut self, team: TeamInfo) {
+        self.teams_info.push(team);
+        
+        let teams_count = self.teams_info.len() as u32;
+        self.combinations = 2u64.pow(teams_count);
+    }
+
     // Get the best valid combination by brute force
     pub fn get_best_valid_combination(&self, seats: u64) -> Option<Combination> {
         let mut best_first_pref_count = 0;
@@ -161,17 +191,17 @@ impl Teams {
 
     // Calculate the number of people who get their first preference in a given combination
     // Return 0 if the seat constraint is exceeded
-    pub fn get_combination_by_id(
+    fn get_combination_by_id(
         &self,
         combination: u64,
         seats: u64,
-    ) -> Result<Combination, &'static str> {
+    ) -> Result<Combination, String> {
         // Combination 0 represents all teams in first pref
         // Combination self.combinations represents all teams in second pref
         // Least significant bit represents pref for first team in self.teams_info
 
         if combination >= self.combinations {
-            return Err("Invalid combination id");
+            return Err("Invalid combination id".to_string());
         }
 
         // Accumulate seats count for all weekdays

@@ -55,7 +55,7 @@ impl TeamsSchedule {
 
         let mut reduced_combination = self.combination.combination_id;
 
-        for team in self.teams.teams_info.iter() {
+        for team in self.teams.teams_info_iter() {
             let mut record = vec![team.team_id().to_string(), team.team_size.to_string()];
 
             let team_weekday = match reduced_combination % 2 {
