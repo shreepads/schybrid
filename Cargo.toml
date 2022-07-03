@@ -1,0 +1,9 @@
+[workspace]
+
+members = [
+    "schybrid",
+    "teams_info",
+    "teams_sched",
+]
+
+default-members = ["schybrid",]
