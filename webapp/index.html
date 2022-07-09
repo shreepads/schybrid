@@ -19,35 +19,44 @@
 
             let teams = new Teams()
 
-            let team_id = "Team1"
-            let team_size = "23"
-            let first_pref = Weekday.Monday
-            let second_pref = Weekday.Thursday
+            // add 20 teams
 
-            let teaminfo1 = new TeamInfo(team_id, team_size, first_pref, second_pref)
+            for (let x = 1; x < 26; x++) {
+                let team_id = "Team".concat(x);
 
-            console.log(teaminfo1.toJSON())
+                // Random team size between 10 and 20
+                let min = Math.ceil(10);
+                let max = Math.floor(20);
+                let team_size = BigInt(Math.floor(Math.random() * (max - min + 1) + min)); 
 
-            teams.add_team(teaminfo1)
+                // random first day pref
+                let weekdays = [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday, Weekday.Thursday, Weekday.Friday];
+                let first_pref_index = (Math.random() * weekdays.length) | 0;
+                let first_pref = weekdays[first_pref_index];
 
-            console.log(teams.combinations)
+                // random second day pref
+                weekdays.splice(first_pref_index, 1);
+                let second_pref_index = (Math.random() * weekdays.length) | 0;
+                let second_pref = weekdays[second_pref_index];
 
-            team_id = "Team2"
-            team_size = "18"
-            first_pref = Weekday.Monday
-            second_pref = Weekday.Wednesday
+                let teaminfo = new TeamInfo(team_id, team_size, first_pref, second_pref);
+                console.log(teaminfo.toJSON());
+                
+                // Add to teams
+                teams.add_team(teaminfo);
+                console.log(teams.combinations);
+            }
 
-            let teaminfo2 = new TeamInfo(team_id, team_size, first_pref, second_pref)
+            console.log(teams.toJSON());
 
-            teams.add_team(teaminfo2)
+            console.time('findbestcombo');
 
-            console.log(teams.combinations)
+            let best_combination = teams.get_best_valid_combination("100");
 
-            console.log(teams.toJSON())
+            console.timeEnd('findbestcombo');
+            // 20 teams 320ms, 25 teams 8.7 secs
 
-            let best_combination = teams.get_best_valid_combination("24")
-
-            console.log(best_combination.toJSON())
+            console.log(best_combination.toJSON());
 
         </script>
     </body>
