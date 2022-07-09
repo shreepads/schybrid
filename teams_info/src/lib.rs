@@ -37,7 +37,7 @@ pub const WEEKDAYS: [Weekday; 7] = [
 #[wasm_bindgen(inspectable)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct TeamInfo {
-    team_id: String,           // String cannot be pub in wasm
+    team_id: String, // String cannot be pub in wasm
     pub team_size: u64,
     pub first_pref: Weekday,
     pub second_pref: Weekday,
@@ -45,9 +45,13 @@ pub struct TeamInfo {
 
 #[wasm_bindgen]
 impl TeamInfo {
-
     #[wasm_bindgen(constructor)]
-    pub fn new(team_id: String, team_size: u64, first_pref: Weekday, second_pref: Weekday) -> TeamInfo {
+    pub fn new(
+        team_id: String,
+        team_size: u64,
+        first_pref: Weekday,
+        second_pref: Weekday,
+    ) -> TeamInfo {
         TeamInfo {
             team_id,
             team_size,
@@ -60,7 +64,6 @@ impl TeamInfo {
     pub fn team_id(&self) -> String {
         self.team_id.clone()
     }
-
 }
 
 #[wasm_bindgen(inspectable)]
@@ -69,13 +72,13 @@ pub struct Combination {
     pub combination_id: u64,
     pub first_pref_count: u64,
     pub second_pref_count: u64,
-    pub min_seats_left: i64,      // Min number of seats left
+    pub min_seats_left: i64, // Min number of seats left
 }
 
 #[wasm_bindgen(inspectable)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct Teams {
-    teams_info: Vec<TeamInfo>,    // Vec cannot be pub in wasm
+    teams_info: Vec<TeamInfo>, // Vec cannot be pub in wasm
     pub combinations: u64,
     pub teams_count: usize,
 }
@@ -138,18 +141,16 @@ impl Teams {
     pub fn teams_info_iter(&self) -> Iter<'_, TeamInfo> {
         self.teams_info.iter()
     }
-
 }
 
 // WASM implementations
 #[wasm_bindgen]
 impl Teams {
-
     // Construct empty Teams as WASM can't pass Vec
     #[wasm_bindgen(constructor)]
     pub fn new() -> Teams {
         Teams {
-            teams_info: vec!(),
+            teams_info: vec![],
             combinations: 0,
             teams_count: 0,
         }
@@ -158,7 +159,7 @@ impl Teams {
     // Add one team at a time as WASM can't pass Vec
     pub fn add_team(&mut self, team: TeamInfo) {
         self.teams_info.push(team);
-        
+
         let teams_count = self.teams_info.len() as u32;
         self.combinations = 2u64.pow(teams_count);
         self.teams_count += 1;
@@ -166,7 +167,6 @@ impl Teams {
 
     // Get TeamInfo so that can be used in Sched wasm while team_info is private
     pub fn get_team(&self, team_index: usize) -> Option<TeamInfo> {
-
         if team_index >= self.teams_count {
             return None;
         }
@@ -197,23 +197,20 @@ impl Teams {
             }
         }
 
-        let best_combination = self.get_combination_by_id(best_combination_id, seats).unwrap();
+        let best_combination = self
+            .get_combination_by_id(best_combination_id, seats)
+            .unwrap();
 
         if best_combination.min_seats_left >= 0 {
             Some(best_combination)
         } else {
             None
         }
-        
     }
 
     // Calculate the number of people who get their first preference in a given combination
     // Return 0 if the seat constraint is exceeded
-    fn get_combination_by_id(
-        &self,
-        combination: u64,
-        seats: u64,
-    ) -> Result<Combination, String> {
+    fn get_combination_by_id(&self, combination: u64, seats: u64) -> Result<Combination, String> {
         // Combination 0 represents all teams in first pref
         // Combination self.combinations represents all teams in second pref
         // Least significant bit represents pref for first team in self.teams_info
@@ -389,7 +386,6 @@ mod tests {
         let best_combination = result.unwrap();
         assert_eq!(best_combination.combination_id, 0);
         assert_eq!(best_combination.first_pref_count, 70);
-
 
         // Check for no combination with 20 seats
         let result = teams.get_best_valid_combination(20);

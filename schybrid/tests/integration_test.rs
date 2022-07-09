@@ -1,6 +1,6 @@
 use teams_info::Teams;
-use teams_sched::TeamsSchedule;
 use teams_sched::AllocatedPreference;
+use teams_sched::TeamsSchedule;
 
 #[test]
 fn schedule_tiny() {
@@ -13,13 +13,12 @@ fn schedule_tiny() {
     let result = teams.get_best_valid_combination(5);
     assert!(result.is_some());
     let best_combination = result.unwrap();
-    
+
     // Generate schedule with 5 seats
     let best_sched = TeamsSchedule::new(teams.clone(), best_combination, 5);
     assert_eq!(best_sched.seats, 5);
 
     for i in 0..teams_count {
-        
         let team_opt = teams.get_team(i);
         assert!(team_opt.is_some());
         let team = team_opt.unwrap();
