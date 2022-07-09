@@ -4,6 +4,7 @@
 use std::error::Error;
 
 use csv::Writer;
+use wasm_bindgen::prelude::*;
 
 use teams_info::Combination;
 use teams_info::Teams;
@@ -19,14 +20,50 @@ pub const SCHED_DAY_RECORD: [[&str; 7]; 7] = [
     ["", "", "", "", "", "", "Y"],
 ];
 
+
+// Alloated preference enum
+#[wasm_bindgen]
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum AllocatedPreference {
+    First,
+    Second,
+    Other,
+    Error,
+}
+
+#[wasm_bindgen(inspectable)]
+#[derive(Debug, Clone, PartialEq)]
+pub struct TeamSchedule {
+    team_id: String,           // String cannot be pub in wasm
+    pub team_size: u64,
+    pub allocated_day: Weekday,
+    pub allocated_pref: AllocatedPreference,
+}
+
+#[wasm_bindgen]
+impl TeamSchedule {
+
+    #[wasm_bindgen(getter)]
+    pub fn team_id(&self) -> String {
+        self.team_id.clone()
+    }
+
+}
+
+
+#[wasm_bindgen(inspectable)]
 #[derive(Debug, Clone, PartialEq)]
 pub struct TeamsSchedule {
     pub combination: Combination,
-    pub teams: Teams,
+    teams: Teams,
     pub seats: u64,
 }
 
+// WASM implementations
+#[wasm_bindgen]
 impl TeamsSchedule {
+    
+    #[wasm_bindgen(constructor)]
     pub fn new(teams: Teams, combination: Combination, seats: u64) -> TeamsSchedule {
         TeamsSchedule {
             combination,
@@ -34,6 +71,52 @@ impl TeamsSchedule {
             seats,
         }
     }
+
+    pub fn get_team_schedule(&self, team_index: usize) -> Option<TeamSchedule> {
+
+        if team_index >= self.teams.teams_count {
+            return None;
+        }
+
+        if let Some(team) = self.teams.get_team(team_index) {
+
+            let team_id = team.team_id();
+            let team_size = team.team_size;
+    
+            let reduced_combination = self.combination.combination_id >> team_index;
+    
+            let (allocated_day, allocated_pref) = match reduced_combination % 2 {
+                0 => {
+                    (team.first_pref, AllocatedPreference::First) // Least significant bit is 0, use first_pref
+                }
+                1 => {
+                    (team.second_pref, AllocatedPreference::Second) // Least significant bit is 1, use second_pref
+                }
+                _ => {
+                    println!("Something has gone horribly wrong");
+                    (Weekday::Error, AllocatedPreference::Error)
+                }
+            };
+    
+            return Some(TeamSchedule {
+                team_id,
+                team_size,
+                allocated_day,
+                allocated_pref,
+            });
+    
+        } else {
+            return None;
+        }
+
+
+    }
+
+}
+
+
+// Non WASM implementations
+impl TeamsSchedule {
 
     pub fn to_csv_file(&self, file_path: String) -> Result<(), Box<dyn Error>> {
         let mut wtr = Writer::from_path(file_path)?;
