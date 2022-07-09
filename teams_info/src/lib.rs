@@ -23,6 +23,7 @@ pub enum Weekday {
     Saturday,
     Error,
 }
+
 pub const WEEKDAYS: [Weekday; 7] = [
     Weekday::Sunday,
     Weekday::Monday,
@@ -63,7 +64,7 @@ impl TeamInfo {
 }
 
 #[wasm_bindgen(inspectable)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Combination {
     pub combination_id: u64,
     pub first_pref_count: u64,
@@ -76,6 +77,7 @@ pub struct Combination {
 pub struct Teams {
     teams_info: Vec<TeamInfo>,    // Vec cannot be pub in wasm
     pub combinations: u64,
+    pub teams_count: usize,
 }
 
 // Non WASM implementations
@@ -123,11 +125,12 @@ impl Teams {
             });
         }
 
-        let teams_count = teams_info.len() as u32;
+        let teams_count = teams_info.len();
 
         Ok(Teams {
             teams_info,
-            combinations: 2u64.pow(teams_count),
+            combinations: 2u64.pow(teams_count as u32),
+            teams_count,
         })
     }
 
@@ -148,6 +151,7 @@ impl Teams {
         Teams {
             teams_info: vec!(),
             combinations: 0,
+            teams_count: 0,
         }
     }
 
@@ -157,6 +161,19 @@ impl Teams {
         
         let teams_count = self.teams_info.len() as u32;
         self.combinations = 2u64.pow(teams_count);
+        self.teams_count += 1;
+    }
+
+    // Get TeamInfo so that can be used in Sched wasm while team_info is private
+    pub fn get_team(&self, team_index: usize) -> Option<TeamInfo> {
+
+        if team_index >= self.teams_count {
+            return None;
+        }
+
+        let team = &self.teams_info[team_index];
+
+        Some(team.clone())
     }
 
     // Get the best valid combination by brute force
