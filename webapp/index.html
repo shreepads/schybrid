@@ -13,7 +13,10 @@
                 Combination, 
                 TeamInfo,
                 Teams,
-            } from './pkg/teams_info.js'
+                AllocatedPreference,
+                TeamSchedule,
+                TeamsSchedule,
+            } from './pkg/teams_sched.js'
 
             await init()
 
@@ -21,7 +24,7 @@
 
             // add 20 teams
 
-            for (let x = 1; x < 26; x++) {
+            for (let x = 1; x <= 20; x++) {
                 let team_id = "Team".concat(x);
 
                 // Random team size between 10 and 20
@@ -49,14 +52,28 @@
 
             console.log(teams.toJSON());
 
+            // Find best combination for 100 seats
+            let seats = "100";
+
             console.time('findbestcombo');
 
-            let best_combination = teams.get_best_valid_combination("100");
+            let best_combination = teams.get_best_valid_combination(seats);
 
             console.timeEnd('findbestcombo');
             // 20 teams 320ms, 25 teams 8.7 secs
 
             console.log(best_combination.toJSON());
+
+            // Get the best schedule
+
+            let best_sched = new TeamsSchedule(teams, best_combination, seats);
+
+            console.log(best_sched.toJSON());
+
+            for (let i = 0; i < teams.teams_count; i++) {
+
+                console.log(best_sched.get_team_schedule(i));
+            }
 
         </script>
     </body>
