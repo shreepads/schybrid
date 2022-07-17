@@ -14,29 +14,8 @@ import init, {
 
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <SchybridComponent />        
-      </header>
-    </div>
-  );
-}
 
-function SchybridComponent() {
-  
+  // Track wasm load state using useEffect
   const [wasmLoaded, setWasmLoaded] = useState(false);
 
   useEffect(() => { 
@@ -52,13 +31,78 @@ function SchybridComponent() {
 
   }, [wasmLoaded]);
 
+  // Render based on wasmLoaded
   return (
-    <p> 
-      {wasmLoaded ? findBestCombination() : "Loading WASM"}
-    </p>
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.tsx</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+        <div>
+          {wasmLoaded ? <SchybridComponent /> : <WasmLoadingComponent /> }
+        </div>
+      </header>
+    </div>
+  );
+}
+
+// Flippy spinny loading WASM message
+function WasmLoadingComponent() {
+  return (
+    <div> Loading WASM... </div>
+  );
+}
+
+// Container for all of Schybrid
+function SchybridComponent() {
+  return (
+    <div>
+      <HeaderComponent /> 
+      <TeamsComponent />
+      <ScheduleComponent />
+      {findBestCombination()}
+    </div>
   );
   
 }
+
+// Header
+function HeaderComponent() {
+  return (
+    <div className="header">
+      Schybrid
+    </div>  
+  );
+}
+
+// Teams setup component
+function TeamsComponent() {
+  return (
+    <div className="header">
+      Teams
+    </div>  
+  );
+}
+
+// Schedule output component
+function ScheduleComponent() {
+  return (
+    <div className="header">
+      Schedule
+    </div>  
+  );
+}
+
+
 
 
 function findBestCombination() {
