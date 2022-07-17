@@ -34,23 +34,9 @@ function App() {
   // Render based on wasmLoaded
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-        <div>
+      <div className="schyrbid-wrapper">
           {wasmLoaded ? <SchybridComponent /> : <WasmLoadingComponent /> }
-        </div>
-      </header>
+      </div>
     </div>
   );
 }
@@ -65,11 +51,13 @@ function WasmLoadingComponent() {
 // Container for all of Schybrid
 function SchybridComponent() {
   return (
-    <div>
+    <div className="schybrid-grid">
       <HeaderComponent /> 
-      <TeamsComponent />
+      <TeamsInfoComponent />
       <ScheduleComponent />
-      {findBestCombination()}
+      <div className="schybrid-box schybrid-footer">
+        {findBestCombination()}
+      </div>
     </div>
   );
   
@@ -78,27 +66,33 @@ function SchybridComponent() {
 // Header
 function HeaderComponent() {
   return (
-    <div className="header">
-      Schybrid
-    </div>  
+    <div className="schybrid-box schybrid-header">
+      <div className="header">
+        Schybrid
+      </div>  
+    </div>
   );
 }
 
 // Teams setup component
-function TeamsComponent() {
+function TeamsInfoComponent() {
   return (
-    <div className="header">
-      Teams
-    </div>  
+    <div className="schybrid-box schybrid-teamsinfo">
+      <div className="header">
+        Teams
+      </div>  
+    </div>
   );
 }
 
 // Schedule output component
 function ScheduleComponent() {
   return (
-    <div className="header">
-      Schedule
-    </div>  
+    <div className="schybrid-box schybrid-schedule">
+      <div className="header">
+        Schedule
+      </div>  
+    </div>
   );
 }
 
