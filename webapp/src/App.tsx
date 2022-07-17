@@ -6,8 +6,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 import React, {useEffect, useState} from 'react';
 import './App.css';
 
-import init from 'teams_sched'
-import { SchybridComponent } from './Schybrid'
+//import init from 'teams_sched'
+import init, { SchybridComponent } from './Schybrid'
 
 function App() {
 

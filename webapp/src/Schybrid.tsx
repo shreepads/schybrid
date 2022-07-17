@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 import React, {useEffect, useState} from 'react';
 import './Schybrid.css';
 
-import {
+import init, {
   Weekday, 
   Combination, 
   TeamInfo,
@@ -16,6 +16,7 @@ import {
   TeamsSchedule,
 } from 'teams_sched'
 
+export default init;
 
 // Container for all of Schybrid
 export function SchybridComponent(): JSX.Element {
