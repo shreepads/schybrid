@@ -1,3 +1,8 @@
+/*
+Copyright (c) 2022 Shreepad Shukla
+SPDX-License-Identifier: AGPL-3.0-only
+*/
+
 import React, {useEffect, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
