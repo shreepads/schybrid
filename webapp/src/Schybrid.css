@@ -8,7 +8,6 @@ SPDX-License-Identifier: AGPL-3.0-only
   grid-gap: 10px;
   grid-template-columns: 1fr 2fr;
   grid-template-rows: 1fr 4fr 1fr;
-  background-color: #282c34;
 }
 
 .schybrid-box {

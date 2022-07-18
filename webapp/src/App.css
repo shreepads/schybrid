@@ -5,9 +5,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 .App {
   text-align: center;
-  background-color: #282c34;
   min-height: 100vh;
-  color: white;
 }
 
 .App-logo {
