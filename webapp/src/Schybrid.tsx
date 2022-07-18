@@ -1,12 +1,15 @@
-/*
-Copyright (c) 2022 Shreepad Shukla
-SPDX-License-Identifier: AGPL-3.0-only
-*/
+/**
+ * @license Schybrid
+ * Schybrid.tsx
+ * 
+ * Copyright (c) 2022 Shreepad Shukla
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 
 import React, {useEffect, useState} from 'react';
 import './Schybrid.css';
 
-import init, {
+import {
   Weekday, 
   Combination, 
   TeamInfo,
@@ -15,8 +18,6 @@ import init, {
   TeamSchedule,
   TeamsSchedule,
 } from 'teams_sched'
-
-export default init;
 
 // Container for all of Schybrid
 export function SchybridComponent(): JSX.Element {
