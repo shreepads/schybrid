@@ -51,11 +51,11 @@ function HeaderComponent() {
 }
 
 // Teams setup component
-function TeamsInfoComponent(props: { teamsInfo: Teams }) {
+function TeamsInfoComponent(props: { teamsInfo: TeamInfo[] }) {
   
   let teamsInfo = props.teamsInfo;
-  let teamsCount = props.teamsInfo.teams_count;
-  let teamsIds = [...Array(teamsCount).keys()];
+  //let teamsCount = props.teamsInfo.teams_count;
+  //let teamsIds = [...Array(teamsCount).keys()];
 
   return (
     <div className="schybrid-box schybrid-teamsinfo">
@@ -64,8 +64,8 @@ function TeamsInfoComponent(props: { teamsInfo: Teams }) {
       </div>
       <div>
         {
-          teamsIds.map(
-            teamId => <TeamInfoComponent teamInfo={teamsInfo.get_team(teamId)}/>
+          teamsInfo.map(
+            (teaminfo, i) => <TeamInfoComponent key={i} teamInfo={teaminfo}/>
           )
         }
       </div>
@@ -75,13 +75,13 @@ function TeamsInfoComponent(props: { teamsInfo: Teams }) {
 
 
 // Team info component
-function TeamInfoComponent(props: {teamInfo : TeamInfo | undefined } ) {
+function TeamInfoComponent(props: {teamInfo : TeamInfo} ) {
   
-  console.log(props.teamInfo ? props.teamInfo.team_id : "no");
+  console.log(`Rendering team ${props.teamInfo.team_id}`);
   
   return (
     <div>
-      {props.teamInfo ? props.teamInfo.team_id : "no"}
+      {props.teamInfo.team_id}
     </div>
   );
 }
@@ -97,10 +97,10 @@ function ScheduleComponent() {
   );
 }
 
+// Array of TeamsInfo randomly generated
+function initTeamsInfo(): TeamInfo[] {
 
-function initTeamsInfo(): Teams {
-
-  let teams = new Teams();
+  let teams = [];
 
   // add 20 teams
 
@@ -128,7 +128,7 @@ function initTeamsInfo(): Teams {
       //console.log(teaminfo.toJSON());
       
       // Add to teams
-      teams.add_team(teaminfo);
+      teams.push(teaminfo);
       //console.log(teams.combinations);
   }
 
