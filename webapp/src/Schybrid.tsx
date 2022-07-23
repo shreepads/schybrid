@@ -31,7 +31,7 @@ export function SchybridComponent(): JSX.Element {
   
   return (
     <div className="schybrid-grid">
-      <HeaderComponent seats={seats}/> 
+      <HeaderComponent seats={seats} setOnChange={setSeats}/> 
       <TeamsInfoComponent teamsInfo={teamsInfo} />
       <ScheduleComponent seats={seats} teamsInfo={teamsInfo}/>
       <div className="schybrid-box schybrid-footer">
@@ -43,7 +43,7 @@ export function SchybridComponent(): JSX.Element {
 }
 
 // Header
-function HeaderComponent(props: { seats: BigInt }) {
+function HeaderComponent(props: { seats: BigInt; setOnChange: Function }) {
 
   console.log("Rendering header");
 
@@ -61,14 +61,27 @@ function HeaderComponent(props: { seats: BigInt }) {
 
 
 // Header
-function SeatsComponent(props: { seats: BigInt }) {
+function SeatsComponent(props: { seats: BigInt; setOnChange: Function }) {
+
+  const handleChange = (e) => {
+    const result = e.target.value.replace(/\D/g, '');
+    props.setOnChange(result);
+  }
 
   console.log("Rendering seats input");
 
   return (
-      <div>
-        {`Seats: ${props.seats}`}
-      </div>
+      <form>
+        <label>
+          Seats:
+          <input
+            type="text"
+            name="seats"
+            value={`${props.seats}`}
+            onChange={handleChange}
+          />
+        </label>
+      </form>
   );
 }
 
