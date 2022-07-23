@@ -63,7 +63,7 @@ function HeaderComponent(props: { seats: BigInt; setOnChange: Function }) {
 // Header
 function SeatsComponent(props: { seats: BigInt; setOnChange: Function }) {
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const result = e.target.value.replace(/\D/g, '');
     props.setOnChange(result);
   }
