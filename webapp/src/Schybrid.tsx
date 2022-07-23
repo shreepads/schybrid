@@ -33,9 +33,9 @@ export function SchybridComponent(): JSX.Element {
     <div className="schybrid-grid">
       <HeaderComponent seats={seats}/> 
       <TeamsInfoComponent teamsInfo={teamsInfo} />
-      <ScheduleComponent />
+      <ScheduleComponent seats={seats} teamsInfo={teamsInfo}/>
       <div className="schybrid-box schybrid-footer">
-        {findBestCombination()}
+        License
       </div>
     </div>
   );
@@ -78,8 +78,6 @@ function SeatsComponent(props: { seats: BigInt }) {
 function TeamsInfoComponent(props: { teamsInfo: TeamInfo[] }) {
   
   let teamsInfo = props.teamsInfo;
-  //let teamsCount = props.teamsInfo.teams_count;
-  //let teamsIds = [...Array(teamsCount).keys()];
 
   return (
     <div className="schybrid-box schybrid-teamsinfo">
@@ -111,14 +109,63 @@ function TeamInfoComponent(props: {teamInfo : TeamInfo} ) {
 }
 
 // Schedule output component
-function ScheduleComponent() {
+function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}) {
+  
+  // if teamsInfo is empty return empty
+  if (props.teamsInfo.length === 0) {
+    return(<div>Waiting...</div>);
+  }
+  
+  // Calculate best combination from WASM
+  let teams = new Teams();
+
+  for (let team of props.teamsInfo) {
+    // Create clone of team to be consumed by add_team
+    let teamClone = new TeamInfo(`${team.team_id}`, team.team_size, team.first_pref, team.second_pref);
+
+    console.log(`Adding team ${teamClone.team_id}`);
+    teams.add_team(teamClone);  
+  }
+
+  console.time('findbestcombosc');
+
+  let best_combination_option = teams.get_best_valid_combination(props.seats as bigint);
+
+  console.timeEnd('findbestcombosc');
+  
   return (
     <div className="schybrid-box schybrid-schedule">
       <div className="header">
         Schedule
-      </div>  
+      </div>
+      <div>
+        <ScheduleMetrics combination={best_combination_option}/>
+        <Schedule teams={teams} combination={best_combination_option}/>
+      </div>
     </div>
   );
+}
+
+
+// Metrics for the combination
+function ScheduleMetrics(props: {combination: Combination | undefined}) {
+  // Check if there is a valid combination
+  if (props.combination) {
+    return (
+      <div>
+        {`People getting 1st pref: ${props.combination.first_pref_count}`}
+      </div>
+    )
+  } else {
+    return (
+      <div>"No valid combination"</div>
+    )
+  }
+}
+
+// Schedule details
+function Schedule(props: {teams: Teams; combination: Combination | undefined}) {
+  return(<div> TBC </div>)
 }
 
 // Array of TeamsInfo randomly generated
@@ -194,7 +241,7 @@ function findBestCombination() {
       
       // Add to teams
       teams.add_team(teaminfo);
-      console.log(teams.combinations);
+      //console.log(teams.combinations);
   }
 
   //console.log(teams.toJSON());
