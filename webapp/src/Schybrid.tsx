@@ -22,13 +22,16 @@ import {
 // Container for all of Schybrid
 export function SchybridComponent(): JSX.Element {
   
-  // Setup teams info init state at random for now
+  // Setup teams info init state TeamsInfo[] at random for now
   const [teamsInfo, setTeamsInfo] = useState(initTeamsInfo());
+
+  // Setup seats inint state BigInt
+  const [seats, setSeats] = useState(BigInt("75"));
 
   
   return (
     <div className="schybrid-grid">
-      <HeaderComponent /> 
+      <HeaderComponent seats={seats}/> 
       <TeamsInfoComponent teamsInfo={teamsInfo} />
       <ScheduleComponent />
       <div className="schybrid-box schybrid-footer">
@@ -40,15 +43,36 @@ export function SchybridComponent(): JSX.Element {
 }
 
 // Header
-function HeaderComponent() {
+function HeaderComponent(props: { seats: BigInt }) {
+
+  console.log("Rendering header");
+
   return (
     <div className="schybrid-box schybrid-header">
       <div className="header">
         Schybrid
-      </div>  
+      </div>
+      <div>
+        <SeatsComponent {...props}/>
+      </div>
     </div>
   );
 }
+
+
+// Header
+function SeatsComponent(props: { seats: BigInt }) {
+
+  console.log("Rendering seats input");
+
+  return (
+      <div>
+        {`Seats: ${props.seats}`}
+      </div>
+  );
+}
+
+
 
 // Teams setup component
 function TeamsInfoComponent(props: { teamsInfo: TeamInfo[] }) {
