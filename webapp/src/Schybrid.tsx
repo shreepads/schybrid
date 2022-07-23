@@ -116,6 +116,8 @@ function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}) {
     return(<div>Waiting...</div>);
   }
   
+  console.time('createteamsc');
+
   // Calculate best combination from WASM
   let teams = new Teams();
 
@@ -126,6 +128,8 @@ function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}) {
     console.log(`Adding team ${teamClone.team_id}`);
     teams.add_team(teamClone);  
   }
+
+  console.timeEnd('createteamsc');
 
   console.time('findbestcombosc');
 
