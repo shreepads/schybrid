@@ -26,7 +26,7 @@ export function SchybridComponent(): JSX.Element {
   const [teamsInfo, setTeamsInfo] = useState(initTeamsInfo());
 
   // Setup seats inint state BigInt
-  const [seats, setSeats] = useState(BigInt("75"));
+  const [seats, setSeats] = useState(BigInt("65"));
 
   
   return (
@@ -144,7 +144,7 @@ function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}) {
       </div>
       <div>
         <ScheduleMetrics combination={best_combination_option}/>
-        <Schedule teams={teams} combination={best_combination_option}/>
+        <Schedule teams={teams} combination={best_combination_option} seats={props.seats}/>
       </div>
     </div>
   );
@@ -168,8 +168,25 @@ function ScheduleMetrics(props: {combination: Combination | undefined}) {
 }
 
 // Schedule details
-function Schedule(props: {teams: Teams; combination: Combination | undefined}) {
-  return(<div> TBC </div>)
+function Schedule(props: {teams: Teams; combination: Combination | undefined; seats: BigInt}) {
+
+  // Check if combination is valid
+  if (!props.combination) {
+    return(<div>TBC</div>)  
+  }
+
+  //console.log("***Generating TeamsSchedule***");
+
+  // Generate schedule
+  let schedule = new TeamsSchedule(props.teams, props.combination, props.seats as bigint);
+  
+  console.log("***Generated TeamsSchedule***");
+
+  return(
+    <div>
+      TBC
+    </div>
+  )
 }
 
 // Array of TeamsInfo randomly generated
@@ -212,62 +229,4 @@ function initTeamsInfo(): TeamInfo[] {
   return teams;
 
 } 
-
-
-function findBestCombination() {
-
-  let teams = new Teams();
-
-  // add 20 teams
-
-  let teams_count = 20;
-
-  for (let x = 1; x <= teams_count; x++) {
-      let team_id = "Team".concat(x.toString());
-
-      // Random team size between 10 and 20
-      let min = Math.ceil(10);
-      let max = Math.floor(20);
-      let team_size = BigInt(Math.floor(Math.random() * (max - min + 1) + min)); 
-
-      // random first day pref
-      let weekdays = [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday, Weekday.Thursday, Weekday.Friday];
-      let first_pref_index = (Math.random() * weekdays.length) | 0;
-      let first_pref = weekdays[first_pref_index];
-
-      // random second day pref
-      weekdays.splice(first_pref_index, 1);
-      let second_pref_index = (Math.random() * weekdays.length) | 0;
-      let second_pref = weekdays[second_pref_index];
-
-      let teaminfo = new TeamInfo(team_id, team_size, first_pref, second_pref);
-      //console.log(teaminfo.toJSON());
-      
-      // Add to teams
-      teams.add_team(teaminfo);
-      //console.log(teams.combinations);
-  }
-
-  //console.log(teams.toJSON());
-
-  // Find best combination for 75 seats
-  let seats = BigInt("75");
-
-  console.time('findbestcombo');
-
-  let best_combination = teams.get_best_valid_combination(seats);
-
-  console.timeEnd('findbestcombo');
-  // 20 teams 320ms, 25 teams 8.7 secs
-
-  //console.log(best_combination.toJSON());
-
-  // Get the best schedule
-
-  if (best_combination) {
-    return best_combination.combination_id.toString();
-  } else {
-    return "No valid combination";
-  }
-}
 
