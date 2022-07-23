@@ -103,7 +103,7 @@ function TeamInfoComponent(props: {teamInfo : TeamInfo} ) {
   
   return (
     <div>
-      {props.teamInfo.team_id}
+      {`${props.teamInfo.team_id}, ${props.teamInfo.team_size}, ${props.teamInfo.first_pref}, ${props.teamInfo.second_pref}`}
     </div>
   );
 }
@@ -172,28 +172,67 @@ function Schedule(props: {teams: Teams; combination: Combination | undefined; se
 
   // Check if combination is valid
   if (!props.combination) {
-    return(<div>TBC</div>)  
+    return(<div></div>)  
   }
 
   // Check if teams is valid
   if (!props.teams) {
-    return(<div>TBC</div>)  
+    return(<div></div>)  
   }
 
   console.log("***Generating TeamsSchedule***");
 
-  let teamsClone: Teams = props.teams.get_clone(); 
+  console.log(props.teams.teams_count);
 
+  let teamscount = props.teams.teams_count;
+
+  let teamsClone = new Teams();
+  
+  for (let i = 0; i<teamscount; i++) {
+    
+    let teamClone = props.teams.get_team(i);
+    
+    if (teamClone) {
+      teamsClone.add_team(teamClone);
+    }
+  }
+
+  // Clone combination
+
+  let comboClone = new Combination();
+  
+  Object.assign(comboClone, props.combination);
+  
   // Generate schedule
-  let schedule = new TeamsSchedule(teamsClone, props.combination, props.seats as bigint);
+  let schedule = new TeamsSchedule(teamsClone, comboClone, props.seats as bigint);
   
   console.log("***Generated TeamsSchedule***");
 
+  let teamsIds = [...Array(teamscount).keys()];
+
   return(
     <div>
-      TBC
+      {
+        teamsIds.map(
+          teamId => <TeamScheduleComponent key={teamId} teamSched={schedule.get_team_schedule(teamId)}/>
+        )
+      }
     </div>
   )
+}
+
+
+// Team schedule disply
+function TeamScheduleComponent(props: {teamSched: TeamSchedule | undefined}) {
+  if (props.teamSched) {
+    return(
+      <div>
+        {`Team ${props.teamSched.team_id}, allocated day ${props.teamSched.allocated_day}`}
+      </div>
+    )
+  } else {
+    return(<div></div>)
+  }
 }
 
 // Array of TeamsInfo randomly generated
