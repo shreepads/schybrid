@@ -15,7 +15,7 @@ fn schedule_tiny() {
     let best_combination = result.unwrap();
 
     // Generate schedule with 5 seats
-    let best_sched = TeamsSchedule::new(teams.clone(), best_combination, 5);
+    let best_sched = TeamsSchedule::new(teams.get_clone(), best_combination, 5);
     assert_eq!(best_sched.seats, 5);
 
     for i in 0..teams_count {

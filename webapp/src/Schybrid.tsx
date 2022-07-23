@@ -175,10 +175,17 @@ function Schedule(props: {teams: Teams; combination: Combination | undefined; se
     return(<div>TBC</div>)  
   }
 
-  //console.log("***Generating TeamsSchedule***");
+  // Check if teams is valid
+  if (!props.teams) {
+    return(<div>TBC</div>)  
+  }
+
+  console.log("***Generating TeamsSchedule***");
+
+  let teamsClone: Teams = props.teams.get_clone(); 
 
   // Generate schedule
-  let schedule = new TeamsSchedule(props.teams, props.combination, props.seats as bigint);
+  let schedule = new TeamsSchedule(teamsClone, props.combination, props.seats as bigint);
   
   console.log("***Generated TeamsSchedule***");
 
