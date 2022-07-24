@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 pub mod weekday;
+pub mod team_info;
 
 use std::error::Error;
 use std::fs::File;
@@ -12,41 +13,12 @@ use wasm_bindgen::prelude::*;
 
 use weekday::Weekday;
 use weekday::WEEKDAYS;
+use team_info::TeamInfo;
 
 pub const MAX_TEAMS: usize = 64;
 
 
-#[wasm_bindgen(inspectable)]
-#[derive(Debug, Clone, PartialEq)]
-pub struct TeamInfo {
-    team_id: String, // String cannot be pub in wasm
-    pub team_size: u64,
-    pub first_pref: Weekday,
-    pub second_pref: Weekday,
-}
 
-#[wasm_bindgen]
-impl TeamInfo {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        team_id: String,
-        team_size: u64,
-        first_pref: Weekday,
-        second_pref: Weekday,
-    ) -> TeamInfo {
-        TeamInfo {
-            team_id,
-            team_size,
-            first_pref,
-            second_pref,
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn team_id(&self) -> String {
-        self.team_id.clone()
-    }
-}
 
 #[wasm_bindgen(inspectable)]
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -102,12 +74,12 @@ impl Teams {
             }
 
             // Create TeamInfo and push to list
-            teams_info.push(TeamInfo {
-                team_id: team_id.to_string(),
+            teams_info.push(TeamInfo::new(
+                team_id.to_string(),
                 team_size,
                 first_pref,
                 second_pref,
-            });
+            ));
         }
 
         let teams_count = teams_info.len();
