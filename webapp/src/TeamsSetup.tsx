@@ -44,7 +44,7 @@ function TeamInfoComponent(props: {teamInfo : TeamInfo} ) {
   
   return (
     <div>
-      {`${props.teamInfo.team_id}, ${props.teamInfo.team_size}, ${props.teamInfo.first_pref}, ${props.teamInfo.second_pref}`}
+      {`${props.teamInfo.team_id}, ${props.teamInfo.team_size} ppl, pref days: ${props.teamInfo.first_pref}, ${props.teamInfo.second_pref}`}
     </div>
   );
 }

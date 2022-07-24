@@ -140,7 +140,7 @@ function TeamScheduleComponent(props: {teamSched: TeamSchedule | undefined}) {
   if (props.teamSched) {
     return(
       <div>
-        {`Team ${props.teamSched.team_id}, allocated day ${props.teamSched.allocated_day}`}
+        {`${props.teamSched.team_id}, allocated day ${props.teamSched.allocated_day}`}
       </div>
     )
   } else {
