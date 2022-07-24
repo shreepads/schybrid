@@ -127,6 +127,11 @@ impl Teams {
 
     // Get the best valid combination by brute force
     pub fn get_best_valid_combination(&self, seats: u64) -> Option<Combination> {
+
+        if self.no_possible_valid_combinations(seats) {
+            return None;
+        }
+
         let mut best_first_pref_count = 0;
         let mut best_combination_id = 0;
 
@@ -155,6 +160,12 @@ impl Teams {
         } else {
             None
         }
+    }
+
+
+    // Check if there are no possible valid combinations
+    fn no_possible_valid_combinations(&self, _seats: u64) -> bool {
+        false
     }
 
     // Calculate the number of people who get their first preference in a given combination
