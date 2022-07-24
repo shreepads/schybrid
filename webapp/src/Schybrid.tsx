@@ -7,8 +7,10 @@
  */
 
 import React, {useEffect, useState} from 'react';
+
 import './Schybrid.css';
 import { HeaderComponent } from './Header'
+import { TeamsSetupComponent } from './TeamsSetup'
 
 import {
   Weekday, 
@@ -33,7 +35,7 @@ export function SchybridComponent(): JSX.Element {
   return (
     <div className="schybrid-grid">
       <HeaderComponent seats={seats} setOnChange={setSeats}/> 
-      <TeamsInfoComponent teamsInfo={teamsInfo} />
+      <TeamsSetupComponent teamsInfo={teamsInfo} />
       <ScheduleComponent seats={seats} teamsInfo={teamsInfo}/>
       <div className="schybrid-box schybrid-footer">
         License
@@ -43,40 +45,6 @@ export function SchybridComponent(): JSX.Element {
   
 }
 
-
-// Teams setup component
-function TeamsInfoComponent(props: { teamsInfo: TeamInfo[] }) {
-  
-  let teamsInfo = props.teamsInfo;
-
-  return (
-    <div className="schybrid-box schybrid-teamsinfo">
-      <div className="header">
-        Teams
-      </div>
-      <div>
-        {
-          teamsInfo.map(
-            (teaminfo, i) => <TeamInfoComponent key={i} teamInfo={teaminfo}/>
-          )
-        }
-      </div>
-    </div>
-  );
-}
-
-
-// Team info component
-function TeamInfoComponent(props: {teamInfo : TeamInfo} ) {
-  
-  console.log(`Rendering team ${props.teamInfo.team_id}`);
-  
-  return (
-    <div>
-      {`${props.teamInfo.team_id}, ${props.teamInfo.team_size}, ${props.teamInfo.first_pref}, ${props.teamInfo.second_pref}`}
-    </div>
-  );
-}
 
 // Schedule output component
 function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}) {
