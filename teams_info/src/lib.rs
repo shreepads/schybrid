@@ -164,7 +164,17 @@ impl Teams {
 
 
     // Check if there are no possible valid combinations
-    fn no_possible_valid_combinations(&self, _seats: u64) -> bool {
+    fn no_possible_valid_combinations(&self, seats: u64) -> bool {
+        
+        // See if biggest team can fit in the seats
+        let max_team_size = self.teams_info.iter()
+            .map(|team| team.team_size)
+            .max().unwrap();
+
+        if max_team_size > seats {
+            return true;
+        }
+        
         false
     }
 
@@ -351,4 +361,33 @@ mod tests {
         let result = teams.get_best_valid_combination(20);
         assert!(result.is_none());
     }
+
+
+    #[test]
+    fn check_simple_no_valid_medium_combination_perf() {
+        let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-medium.csv"));
+        assert!(result.is_ok());
+        let teams = result.unwrap();
+        assert_eq!(teams.teams_info.len(), 20);
+        assert_eq!(teams.combinations, 1048576);
+
+        // Check for perf for no combinations with 24 seats
+        let result = teams.get_best_valid_combination(24);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn check_complex_no_valid_medium_combination_perf() {
+        let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-medium.csv"));
+        assert!(result.is_ok());
+        let teams = result.unwrap();
+        assert_eq!(teams.teams_info.len(), 20);
+        assert_eq!(teams.combinations, 1048576);
+
+        // Check for perf for no combinations with 30 seats
+        let result = teams.get_best_valid_combination(30);
+        assert!(result.is_none());
+    }
+
+
 }
