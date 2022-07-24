@@ -17,8 +17,3 @@ SPDX-License-Identifier: AGPL-3.0-only
   padding: 20px;
   font-size: 100%;
 }
-
-.schybrid-footer {
-  grid-column: 1 / 3;
-  grid-row: 3;
-}

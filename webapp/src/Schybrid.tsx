@@ -12,6 +12,7 @@ import './Schybrid.css';
 import { HeaderComponent } from './Header'
 import { TeamsSetupComponent } from './TeamsSetup'
 import { ScheduleComponent } from './Schedule';
+import { FooterComponent } from './Footer';
 
 import {
   Weekday, 
@@ -27,16 +28,13 @@ export function SchybridComponent(): JSX.Element {
 
   // Setup seats inint state BigInt
   const [seats, setSeats] = useState(BigInt("65"));
-
   
   return (
     <div className="schybrid-grid">
       <HeaderComponent seats={seats} setOnChange={setSeats}/> 
       <TeamsSetupComponent teamsInfo={teamsInfo} />
       <ScheduleComponent seats={seats} teamsInfo={teamsInfo}/>
-      <div className="schybrid-box schybrid-footer">
-        License
-      </div>
+      <FooterComponent/>
     </div>
   );
   

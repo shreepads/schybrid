@@ -1,6 +1,6 @@
 /**
  * @license Schybrid
- * Schybrid.tsx
+ * Schedule.tsx
  * 
  * Copyright (c) 2022 Shreepad Shukla
  * SPDX-License-Identifier: AGPL-3.0-only
