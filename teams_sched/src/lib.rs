@@ -1,6 +1,8 @@
 // Copyright (c) 2022 Shreepad Shukla
 // SPDX-License-Identifier: AGPL-3.0-only
 
+pub mod alloc_pref;
+
 use std::error::Error;
 
 use csv::Writer;
@@ -9,6 +11,8 @@ use wasm_bindgen::prelude::*;
 use teams_info::combination::Combination;
 use teams_info::Teams;
 use teams_info::weekday::Weekday;
+
+use crate::alloc_pref::AllocatedPreference;
 
 pub const SCHED_DAY_RECORD: [[&str; 7]; 7] = [
     ["Y", "", "", "", "", "", ""],
@@ -20,15 +24,6 @@ pub const SCHED_DAY_RECORD: [[&str; 7]; 7] = [
     ["", "", "", "", "", "", "Y"],
 ];
 
-// Alloated preference enum
-#[wasm_bindgen]
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum AllocatedPreference {
-    First,
-    Second,
-    Other,
-    Error,
-}
 
 #[wasm_bindgen(inspectable)]
 #[derive(Debug, Clone, PartialEq)]

@@ -1,5 +1,5 @@
 use teams_info::Teams;
-use teams_sched::AllocatedPreference;
+use teams_sched::alloc_pref::AllocatedPreference;
 use teams_sched::TeamsSchedule;
 
 #[test]
