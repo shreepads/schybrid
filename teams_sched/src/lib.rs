@@ -6,7 +6,7 @@ use std::error::Error;
 use csv::Writer;
 use wasm_bindgen::prelude::*;
 
-use teams_info::Combination;
+use teams_info::combination::Combination;
 use teams_info::Teams;
 use teams_info::weekday::Weekday;
 

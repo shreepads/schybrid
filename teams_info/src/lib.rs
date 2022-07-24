@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 pub mod weekday;
-pub mod team_info;
+mod team_info;
+pub mod combination;
 
 use std::error::Error;
 use std::fs::File;
@@ -14,20 +15,9 @@ use wasm_bindgen::prelude::*;
 use weekday::Weekday;
 use weekday::WEEKDAYS;
 use team_info::TeamInfo;
+use combination::Combination;
 
 pub const MAX_TEAMS: usize = 64;
-
-
-
-
-#[wasm_bindgen(inspectable)]
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Combination {
-    pub combination_id: u64,
-    pub first_pref_count: u64,
-    pub second_pref_count: u64,
-    pub min_seats_left: i64, // Min number of seats left
-}
 
 #[wasm_bindgen(inspectable)]
 #[derive(Debug, Clone, PartialEq)]
