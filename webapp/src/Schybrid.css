@@ -18,11 +18,6 @@ SPDX-License-Identifier: AGPL-3.0-only
   font-size: 100%;
 }
 
-.schybrid-header {
-  grid-column: 1 / 3;
-  grid-row: 1;
-}
-
 .schybrid-teamsinfo {
   grid-column: 1 ;
   grid-row: 2;

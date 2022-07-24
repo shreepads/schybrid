@@ -8,6 +8,7 @@
 
 import React, {useEffect, useState} from 'react';
 import './Schybrid.css';
+import { HeaderComponent } from './Header'
 
 import {
   Weekday, 
@@ -41,50 +42,6 @@ export function SchybridComponent(): JSX.Element {
   );
   
 }
-
-// Header
-function HeaderComponent(props: { seats: BigInt; setOnChange: Function }) {
-
-  console.log("Rendering header");
-
-  return (
-    <div className="schybrid-box schybrid-header">
-      <div className="header">
-        Schybrid
-      </div>
-      <div>
-        <SeatsComponent {...props}/>
-      </div>
-    </div>
-  );
-}
-
-
-// Header
-function SeatsComponent(props: { seats: BigInt; setOnChange: Function }) {
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const result = e.target.value.replace(/\D/g, '');
-    props.setOnChange(result);
-  }
-
-  console.log("Rendering seats input");
-
-  return (
-      <form>
-        <label>
-          Seats:
-          <input
-            type="text"
-            name="seats"
-            value={`${props.seats}`}
-            onChange={handleChange}
-          />
-        </label>
-      </form>
-  );
-}
-
 
 
 // Teams setup component
