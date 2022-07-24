@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 
 pub mod alloc_pref;
+pub mod team_schedule;
 
 use std::error::Error;
 
@@ -13,6 +14,7 @@ use teams_info::Teams;
 use teams_info::weekday::Weekday;
 
 use crate::alloc_pref::AllocatedPreference;
+use crate::team_schedule::TeamSchedule;
 
 pub const SCHED_DAY_RECORD: [[&str; 7]; 7] = [
     ["Y", "", "", "", "", "", ""],
@@ -24,23 +26,6 @@ pub const SCHED_DAY_RECORD: [[&str; 7]; 7] = [
     ["", "", "", "", "", "", "Y"],
 ];
 
-
-#[wasm_bindgen(inspectable)]
-#[derive(Debug, Clone, PartialEq)]
-pub struct TeamSchedule {
-    team_id: String, // String cannot be pub in wasm
-    pub team_size: u64,
-    pub allocated_day: Weekday,
-    pub allocated_pref: AllocatedPreference,
-}
-
-#[wasm_bindgen]
-impl TeamSchedule {
-    #[wasm_bindgen(getter)]
-    pub fn team_id(&self) -> String {
-        self.team_id.clone()
-    }
-}
 
 #[wasm_bindgen(inspectable)]
 #[derive(Debug, Clone, PartialEq)]
@@ -86,12 +71,12 @@ impl TeamsSchedule {
                 }
             };
 
-            return Some(TeamSchedule {
+            return Some(TeamSchedule::new(
                 team_id,
                 team_size,
                 allocated_day,
                 allocated_pref,
-            });
+            ));
         } else {
             return None;
         }
