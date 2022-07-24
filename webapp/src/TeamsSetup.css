@@ -1,0 +1,9 @@
+/*
+Copyright (c) 2022 Shreepad Shukla
+SPDX-License-Identifier: AGPL-3.0-only
+*/
+
+.schybrid-teamssetup {
+  grid-column: 1 ;
+  grid-row: 2;
+}

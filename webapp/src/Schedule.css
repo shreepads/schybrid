@@ -1,0 +1,9 @@
+/*
+Copyright (c) 2022 Shreepad Shukla
+SPDX-License-Identifier: AGPL-3.0-only
+*/
+
+.schybrid-schedule {
+  grid-column: 2 ;
+  grid-row: 2 ;
+}

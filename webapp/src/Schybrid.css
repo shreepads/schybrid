@@ -1,0 +1,19 @@
+/*
+Copyright (c) 2022 Shreepad Shukla
+SPDX-License-Identifier: AGPL-3.0-only
+*/
+
+.schybrid-grid {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: 1fr 4fr 1fr;
+}
+
+.schybrid-box {
+  background-color: #444;
+  color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  font-size: 100%;
+}

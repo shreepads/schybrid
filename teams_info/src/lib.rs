@@ -156,6 +156,11 @@ impl Teams {
         }
     }
 
+    // Get clone of the Teams object for use in JS
+    pub fn get_clone(&self) -> Teams {
+        self.clone()
+    }
+
     // Add one team at a time as WASM can't pass Vec
     pub fn add_team(&mut self, team: TeamInfo) {
         self.teams_info.push(team);
