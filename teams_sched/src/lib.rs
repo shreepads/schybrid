@@ -8,7 +8,7 @@ use wasm_bindgen::prelude::*;
 
 use teams_info::Combination;
 use teams_info::Teams;
-use teams_info::Weekday;
+use teams_info::weekday::Weekday;
 
 pub const SCHED_DAY_RECORD: [[&str; 7]; 7] = [
     ["Y", "", "", "", "", "", ""],
