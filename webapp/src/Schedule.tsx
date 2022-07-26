@@ -38,11 +38,13 @@ export function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}
     // Create clone of team to be consumed by add_team
     let teamClone = new TeamInfo(`${team.team_id}`, team.team_size, team.first_pref, team.second_pref);
 
-    console.log(`Adding team ${teamClone.team_id}`);
+    //console.log(`Adding team ${teamClone.team_id}`);
     teams.add_team(teamClone);  
   }
 
   console.timeEnd('createteamsc');
+
+  console.log(teams.toJSON());
 
   console.time('findbestcombosc');
 
