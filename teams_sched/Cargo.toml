@@ -14,5 +14,5 @@ crate-type = ["lib", "cdylib"]
 
 [dependencies]
 csv = "1.1.6"
-wasm-bindgen = "0.2.81"
+wasm-bindgen = "0.2.82"
 teams_info = { path = "../teams_info" }
