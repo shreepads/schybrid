@@ -9,10 +9,10 @@
 import React, {useEffect, useState} from 'react';
 
 import './Schybrid.css';
-import { HeaderComponent } from './Header'
-import { TeamsSetupComponent } from './TeamsSetup'
-import { ScheduleComponent } from './Schedule';
-import { FooterComponent } from './Footer';
+import { HeaderComponent } from './components/Header'
+import { TeamsSetupComponent } from './components/TeamsSetup'
+import { ScheduleComponent } from './components/Schedule';
+import { FooterComponent } from './components/Footer';
 
 import {
   Weekday, 
