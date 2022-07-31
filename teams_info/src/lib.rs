@@ -137,6 +137,13 @@ impl Teams {
         for combination_id in 0..self.combinations {
             if let Ok(combination) = self.get_combination_by_id(combination_id, seats) {
                 if combination.min_seats_left >= 0 {
+                    // Check if everyone got 1st pref, if so break out
+                    if combination.first_pref_count == self.people_count {
+                        best_combination_id = combination_id;
+                        break;
+                    }
+
+                    // Check if got a better combination
                     if combination.first_pref_count > best_first_pref_count {
                         //println!("Found better combination: {:?}", combination);
                         best_combination_id = combination_id;
@@ -413,5 +420,23 @@ mod tests {
         let result = teams.get_best_valid_combination(50);
         assert!(result.is_none());
     }
+
+    #[test]
+    fn check_too_many_seats_valid_medium_combination_perf() {
+        let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-medium.csv"));
+        assert!(result.is_ok());
+        let teams = result.unwrap();
+        assert_eq!(teams.teams_info.len(), 20);
+        assert_eq!(teams.combinations, 1048576);
+        assert_eq!(teams.people_count, 299);
+
+        // Check for perf for best combination with 5000 seats
+        // i.e. sufficient to accomodate all teams on 1st pref day
+        let result = teams.get_best_valid_combination(5000);
+        assert!(result.is_some());
+        let best_combination = result.unwrap();
+        assert_eq!(best_combination.combination_id, 0);
+    }
+
 
 }
