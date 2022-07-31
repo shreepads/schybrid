@@ -25,12 +25,13 @@ pub struct Teams {
     teams_info: Vec<TeamInfo>, // Vec cannot be pub in wasm
     pub combinations: u64,
     pub teams_count: usize,
+    pub people_count: u64,
 }
 
 // Non WASM implementations
 impl Teams {
     pub fn from_csv_file(file_path: String) -> Result<Teams, Box<dyn Error>> {
-        let mut teams_info = Vec::with_capacity(MAX_TEAMS);
+        let mut teams = Teams::new();
 
         let file = File::open(file_path)?;
         let mut rdr = Reader::from_reader(file);
@@ -64,7 +65,7 @@ impl Teams {
             }
 
             // Create TeamInfo and push to list
-            teams_info.push(TeamInfo::new(
+            teams.add_team(TeamInfo::new(
                 team_id.to_string(),
                 team_size,
                 first_pref,
@@ -72,13 +73,7 @@ impl Teams {
             ));
         }
 
-        let teams_count = teams_info.len();
-
-        Ok(Teams {
-            teams_info,
-            combinations: 2u64.pow(teams_count as u32),
-            teams_count,
-        })
+        Ok(teams)
     }
 
     // The teams_info Vec can't be public for wasm
@@ -94,9 +89,10 @@ impl Teams {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Teams {
         Teams {
-            teams_info: vec![],
+            teams_info: Vec::with_capacity(MAX_TEAMS),
             combinations: 0,
             teams_count: 0,
+            people_count: 0,
         }
     }
 
@@ -107,6 +103,7 @@ impl Teams {
 
     // Add one team at a time as WASM can't pass Vec
     pub fn add_team(&mut self, team: TeamInfo) {
+        self.people_count += team.team_size;
         self.teams_info.push(team);
 
         let teams_count = self.teams_info.len() as u32;
@@ -259,12 +256,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn load_small_csv_file() {
+    fn check_small_csv_file_load() {
         let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-small.csv"));
         assert!(result.is_ok());
         let teams = result.unwrap();
         assert_eq!(teams.teams_info.len(), 6);
         assert_eq!(teams.combinations, 64);
+        assert_eq!(teams.people_count, 70);
     }
 
     #[test]
@@ -274,6 +272,7 @@ mod tests {
         let teams = result.unwrap();
         assert_eq!(teams.teams_info.len(), 3);
         assert_eq!(teams.combinations, 8);
+        assert_eq!(teams.people_count, 12);
 
         // All teams at first pref, 5 seats
         let result = teams.get_combination_by_id(0, 5);
@@ -315,6 +314,7 @@ mod tests {
         let teams = result.unwrap();
         assert_eq!(teams.teams_info.len(), 3);
         assert_eq!(teams.combinations, 8);
+        assert_eq!(teams.people_count, 12);
 
         // Check for best combination with 7 seats
         let result = teams.get_best_valid_combination(7);
@@ -335,6 +335,7 @@ mod tests {
         let teams = result.unwrap();
         assert_eq!(teams.teams_info.len(), 6);
         assert_eq!(teams.combinations, 64);
+        assert_eq!(teams.people_count, 70);
 
         // Check for best combination with 21 seats
         let result = teams.get_best_valid_combination(21);
@@ -370,6 +371,7 @@ mod tests {
         let teams = result.unwrap();
         assert_eq!(teams.teams_info.len(), 20);
         assert_eq!(teams.combinations, 1048576);
+        assert_eq!(teams.people_count, 299);
 
         // Check for perf for no combinations with 24 seats
         let result = teams.get_best_valid_combination(24);
@@ -383,6 +385,7 @@ mod tests {
         let teams = result.unwrap();
         assert_eq!(teams.teams_info.len(), 20);
         assert_eq!(teams.combinations, 1048576);
+        assert_eq!(teams.people_count, 299);
 
         // Check for perf for no combinations with 30 seats
         let result = teams.get_best_valid_combination(30);
