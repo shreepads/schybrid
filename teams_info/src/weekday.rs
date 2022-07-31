@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::*;
 
 // Weekdays enum and array for iteration, order matches the CSV template
 #[wasm_bindgen]
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Weekday {
     Sunday,
     Monday,

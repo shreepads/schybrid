@@ -11,6 +11,7 @@ use std::slice::Iter;
 
 use csv::Reader;
 use wasm_bindgen::prelude::*;
+use ahash::AHashMap;
 
 use weekday::Weekday;
 use weekday::WEEKDAYS;
@@ -171,7 +172,25 @@ impl Teams {
         if max_team_size > seats {
             return true;
         }
+
+        // Check if total size of teams that share the same 1st and 2nd pref is more than seats
+        let mut pref_seats_map: AHashMap<(Weekday, Weekday), u64> = AHashMap::new();
         
+        // Add each team's size into map
+        for team in self.teams_info.iter() {
+            let people_count = pref_seats_map.entry((team.first_pref, team.second_pref)).or_insert(0);
+            *people_count += team.team_size;
+        }
+
+        println!("Seats Hashmap: {:?}", pref_seats_map);
+
+        // Check if fewer seats than people for given 1st/ 2nd pref
+        for people_count in pref_seats_map.values() {
+            if *people_count > seats {
+                return true;
+            }
+        }
+
         false
     }
 
@@ -374,6 +393,7 @@ mod tests {
         assert_eq!(teams.people_count, 299);
 
         // Check for perf for no combinations with 24 seats
+        // i.e. seats less than size of biggest team
         let result = teams.get_best_valid_combination(24);
         assert!(result.is_none());
     }
@@ -387,10 +407,11 @@ mod tests {
         assert_eq!(teams.combinations, 1048576);
         assert_eq!(teams.people_count, 299);
 
-        // Check for perf for no combinations with 30 seats
-        let result = teams.get_best_valid_combination(30);
+        // Check for perf for no combinations with 50 seats
+        // i.e. seats more than size of biggest team but less than total size
+        // of two or more teams that share the same prefs
+        let result = teams.get_best_valid_combination(50);
         assert!(result.is_none());
     }
-
 
 }
