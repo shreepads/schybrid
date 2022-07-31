@@ -1,79 +1,24 @@
 // Copyright (c) 2022 Shreepad Shukla
 // SPDX-License-Identifier: AGPL-3.0-only
 
+pub mod weekday;
+mod team_info;
+pub mod combination;
+
 use std::error::Error;
 use std::fs::File;
 use std::slice::Iter;
 
 use csv::Reader;
 use wasm_bindgen::prelude::*;
+use ahash::AHashMap;
+
+use weekday::Weekday;
+use weekday::WEEKDAYS;
+use team_info::TeamInfo;
+use combination::Combination;
 
 pub const MAX_TEAMS: usize = 64;
-
-// Weekdays enum and array for iteration, order matches the CSV template
-#[wasm_bindgen]
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum Weekday {
-    Sunday,
-    Monday,
-    Tuesday,
-    Wednesday,
-    Thursday,
-    Friday,
-    Saturday,
-    Error,
-}
-
-pub const WEEKDAYS: [Weekday; 7] = [
-    Weekday::Sunday,
-    Weekday::Monday,
-    Weekday::Tuesday,
-    Weekday::Wednesday,
-    Weekday::Thursday,
-    Weekday::Friday,
-    Weekday::Saturday,
-];
-
-#[wasm_bindgen(inspectable)]
-#[derive(Debug, Clone, PartialEq)]
-pub struct TeamInfo {
-    team_id: String, // String cannot be pub in wasm
-    pub team_size: u64,
-    pub first_pref: Weekday,
-    pub second_pref: Weekday,
-}
-
-#[wasm_bindgen]
-impl TeamInfo {
-    #[wasm_bindgen(constructor)]
-    pub fn new(
-        team_id: String,
-        team_size: u64,
-        first_pref: Weekday,
-        second_pref: Weekday,
-    ) -> TeamInfo {
-        TeamInfo {
-            team_id,
-            team_size,
-            first_pref,
-            second_pref,
-        }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn team_id(&self) -> String {
-        self.team_id.clone()
-    }
-}
-
-#[wasm_bindgen(inspectable)]
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub struct Combination {
-    pub combination_id: u64,
-    pub first_pref_count: u64,
-    pub second_pref_count: u64,
-    pub min_seats_left: i64, // Min number of seats left
-}
 
 #[wasm_bindgen(inspectable)]
 #[derive(Debug, Clone, PartialEq)]
@@ -81,12 +26,13 @@ pub struct Teams {
     teams_info: Vec<TeamInfo>, // Vec cannot be pub in wasm
     pub combinations: u64,
     pub teams_count: usize,
+    pub people_count: u64,
 }
 
 // Non WASM implementations
 impl Teams {
     pub fn from_csv_file(file_path: String) -> Result<Teams, Box<dyn Error>> {
-        let mut teams_info = Vec::with_capacity(MAX_TEAMS);
+        let mut teams = Teams::new();
 
         let file = File::open(file_path)?;
         let mut rdr = Reader::from_reader(file);
@@ -120,21 +66,15 @@ impl Teams {
             }
 
             // Create TeamInfo and push to list
-            teams_info.push(TeamInfo {
-                team_id: team_id.to_string(),
+            teams.add_team(TeamInfo::new(
+                team_id.to_string(),
                 team_size,
                 first_pref,
                 second_pref,
-            });
+            ));
         }
 
-        let teams_count = teams_info.len();
-
-        Ok(Teams {
-            teams_info,
-            combinations: 2u64.pow(teams_count as u32),
-            teams_count,
-        })
+        Ok(teams)
     }
 
     // The teams_info Vec can't be public for wasm
@@ -150,9 +90,10 @@ impl Teams {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Teams {
         Teams {
-            teams_info: vec![],
+            teams_info: Vec::with_capacity(MAX_TEAMS),
             combinations: 0,
             teams_count: 0,
+            people_count: 0,
         }
     }
 
@@ -163,6 +104,7 @@ impl Teams {
 
     // Add one team at a time as WASM can't pass Vec
     pub fn add_team(&mut self, team: TeamInfo) {
+        self.people_count += team.team_size;
         self.teams_info.push(team);
 
         let teams_count = self.teams_info.len() as u32;
@@ -183,6 +125,11 @@ impl Teams {
 
     // Get the best valid combination by brute force
     pub fn get_best_valid_combination(&self, seats: u64) -> Option<Combination> {
+
+        if self.no_possible_valid_combinations(seats) {
+            return None;
+        }
+
         let mut best_first_pref_count = 0;
         let mut best_combination_id = 0;
 
@@ -190,6 +137,13 @@ impl Teams {
         for combination_id in 0..self.combinations {
             if let Ok(combination) = self.get_combination_by_id(combination_id, seats) {
                 if combination.min_seats_left >= 0 {
+                    // Check if everyone got 1st pref, if so break out
+                    if combination.first_pref_count == self.people_count {
+                        best_combination_id = combination_id;
+                        break;
+                    }
+
+                    // Check if got a better combination
                     if combination.first_pref_count > best_first_pref_count {
                         //println!("Found better combination: {:?}", combination);
                         best_combination_id = combination_id;
@@ -211,6 +165,40 @@ impl Teams {
         } else {
             None
         }
+    }
+
+
+    // Check if there are no possible valid combinations
+    fn no_possible_valid_combinations(&self, seats: u64) -> bool {
+        
+        // See if biggest team can fit in the seats
+        let max_team_size = self.teams_info.iter()
+            .map(|team| team.team_size)
+            .max().unwrap();
+
+        if max_team_size > seats {
+            return true;
+        }
+
+        // Check if total size of teams that share the same 1st and 2nd pref is more than seats
+        let mut pref_seats_map: AHashMap<(Weekday, Weekday), u64> = AHashMap::new();
+        
+        // Add each team's size into map
+        for team in self.teams_info.iter() {
+            let people_count = pref_seats_map.entry((team.first_pref, team.second_pref)).or_insert(0);
+            *people_count += team.team_size;
+        }
+
+        println!("Seats Hashmap: {:?}", pref_seats_map);
+
+        // Check if fewer seats than people for given 1st/ 2nd pref
+        for people_count in pref_seats_map.values() {
+            if *people_count > seats {
+                return true;
+            }
+        }
+
+        false
     }
 
     // Calculate the number of people who get their first preference in a given combination
@@ -294,12 +282,13 @@ mod tests {
     use super::*;
 
     #[test]
-    fn load_small_csv_file() {
+    fn check_small_csv_file_load() {
         let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-small.csv"));
         assert!(result.is_ok());
         let teams = result.unwrap();
         assert_eq!(teams.teams_info.len(), 6);
         assert_eq!(teams.combinations, 64);
+        assert_eq!(teams.people_count, 70);
     }
 
     #[test]
@@ -309,6 +298,7 @@ mod tests {
         let teams = result.unwrap();
         assert_eq!(teams.teams_info.len(), 3);
         assert_eq!(teams.combinations, 8);
+        assert_eq!(teams.people_count, 12);
 
         // All teams at first pref, 5 seats
         let result = teams.get_combination_by_id(0, 5);
@@ -350,6 +340,7 @@ mod tests {
         let teams = result.unwrap();
         assert_eq!(teams.teams_info.len(), 3);
         assert_eq!(teams.combinations, 8);
+        assert_eq!(teams.people_count, 12);
 
         // Check for best combination with 7 seats
         let result = teams.get_best_valid_combination(7);
@@ -370,6 +361,7 @@ mod tests {
         let teams = result.unwrap();
         assert_eq!(teams.teams_info.len(), 6);
         assert_eq!(teams.combinations, 64);
+        assert_eq!(teams.people_count, 70);
 
         // Check for best combination with 21 seats
         let result = teams.get_best_valid_combination(21);
@@ -396,4 +388,55 @@ mod tests {
         let result = teams.get_best_valid_combination(20);
         assert!(result.is_none());
     }
+
+
+    #[test]
+    fn check_simple_no_valid_medium_combination_perf() {
+        let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-medium.csv"));
+        assert!(result.is_ok());
+        let teams = result.unwrap();
+        assert_eq!(teams.teams_info.len(), 20);
+        assert_eq!(teams.combinations, 1048576);
+        assert_eq!(teams.people_count, 299);
+
+        // Check for perf for no combinations with 24 seats
+        // i.e. seats less than size of biggest team
+        let result = teams.get_best_valid_combination(24);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn check_complex_no_valid_medium_combination_perf() {
+        let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-medium.csv"));
+        assert!(result.is_ok());
+        let teams = result.unwrap();
+        assert_eq!(teams.teams_info.len(), 20);
+        assert_eq!(teams.combinations, 1048576);
+        assert_eq!(teams.people_count, 299);
+
+        // Check for perf for no combinations with 50 seats
+        // i.e. seats more than size of biggest team but less than total size
+        // of two or more teams that share the same prefs
+        let result = teams.get_best_valid_combination(50);
+        assert!(result.is_none());
+    }
+
+    #[test]
+    fn check_too_many_seats_valid_medium_combination_perf() {
+        let result = Teams::from_csv_file(String::from("../resources/testdata/testdata-medium.csv"));
+        assert!(result.is_ok());
+        let teams = result.unwrap();
+        assert_eq!(teams.teams_info.len(), 20);
+        assert_eq!(teams.combinations, 1048576);
+        assert_eq!(teams.people_count, 299);
+
+        // Check for perf for best combination with 5000 seats
+        // i.e. sufficient to accomodate all teams on 1st pref day
+        let result = teams.get_best_valid_combination(5000);
+        assert!(result.is_some());
+        let best_combination = result.unwrap();
+        assert_eq!(best_combination.combination_id, 0);
+    }
+
+
 }

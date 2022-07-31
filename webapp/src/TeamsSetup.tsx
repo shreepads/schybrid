@@ -40,7 +40,7 @@ export function TeamsSetupComponent(props: { teamsInfo: TeamInfo[] }): JSX.Eleme
 // Team info component
 function TeamInfoComponent(props: {teamInfo : TeamInfo} ) {
   
-  console.log(`Rendering team ${props.teamInfo.team_id}`);
+  //console.log(`Rendering team ${props.teamInfo.team_id}`);
   
   return (
     <div>

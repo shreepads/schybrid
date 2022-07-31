@@ -2,6 +2,10 @@
 name = "teams_sched"
 version = "0.1.0"
 edition = "2021"
+authors = ["Shreepad Shukla"]
+description = "Generate teams schedule from teams information and seating combination"
+repository = "https://github.com/shreepads/schybrid"
+license = "AGPL-3.0-only"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -10,5 +14,5 @@ crate-type = ["lib", "cdylib"]
 
 [dependencies]
 csv = "1.1.6"
-wasm-bindgen = "0.2.81"
+wasm-bindgen = "0.2.82"
 teams_info = { path = "../teams_info" }
