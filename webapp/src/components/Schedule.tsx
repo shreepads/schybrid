@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-//import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import './Schedule.css';
 
@@ -26,12 +26,23 @@ export function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}
   
   console.log("Rendering schedule");
 
+  const [bestValidCombination, setBestValidCombination] = useState<Combination | undefined>(undefined);
+  const [teamsSchedule, setteamsSchedule] = useState<TeamSchedule[]>([]);
+
+  useEffect(() => {
+
+    const [best_valid_combination, teams_schedule] = computeBestCombinationSchedule(props.seats, props.teamsInfo);
+
+    setBestValidCombination(best_valid_combination);
+    setteamsSchedule(teams_schedule);
+
+  }, [props.seats, props.teamsInfo]);
+
+  
   // if teamsInfo is empty return empty
   if (props.teamsInfo.length === 0) {
-    return(<div>Waiting...</div>);
+    return(<div>No teams to schedule</div>);
   }
-
-  const [best_valid_combination, teamsSchedule] = computeBestCombinationSchedule(props.seats, props.teamsInfo);
 
   return (
     <div className="schybrid-box schybrid-schedule">
@@ -39,7 +50,7 @@ export function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}
         Schedule
       </div>
       <div>
-        <ScheduleMetrics combination={best_valid_combination}/>
+        <ScheduleMetrics combination={bestValidCombination}/>
         <Schedule schedules={teamsSchedule}/>
       </div>
     </div>
@@ -120,8 +131,8 @@ function computeBestCombinationSchedule(seats: BigInt, teamsInfo : TeamInfo[]) {
     //console.log(typeof team);
     //console.log(team.toJSON());
 
-    //let teamClone = team.get_clone();
-    let teamClone = new TeamInfo(`${team.team_id}`, team.team_size, team.first_pref, team.second_pref);
+    let teamClone = team.get_clone();
+    //let teamClone = new TeamInfo(`${team.team_id}`, team.team_size, team.first_pref, team.second_pref);
 
     //console.log(`Adding team ${teamClone.team_id}`);
     teams.add_team(teamClone);  
@@ -162,17 +173,17 @@ function computeBestCombinationSchedule(seats: BigInt, teamsInfo : TeamInfo[]) {
     //console.log(typeof team);
     //console.log(team.toJSON());
 
-    //let teamClone = team.get_clone();
-    let teamClone = new TeamInfo(`${team.team_id}`, team.team_size, team.first_pref, team.second_pref);
+    let teamClone = team.get_clone();
+    //let teamClone = new TeamInfo(`${team.team_id}`, team.team_size, team.first_pref, team.second_pref);
 
     //console.log(`Adding team ${teamClone.team_id}`);
     teamsClone.add_team(teamClone);  
   }
 
   // Clone combination to be consumed by new TeamsSchedule
-  let comboClone = new Combination();
+  let comboClone = best_valid_combination.get_clone();
   
-  Object.assign(comboClone, best_valid_combination);
+  //Object.assign(comboClone, best_valid_combination);
   
   // Generate schedule
   let schedule = new TeamsSchedule(teamsClone, comboClone, seats as bigint);

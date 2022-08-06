@@ -11,3 +11,11 @@ pub struct Combination {
     pub second_pref_count: u64,
     pub min_seats_left: i64, // Min number of seats left
 }
+
+#[wasm_bindgen]
+impl Combination {
+    // Get clone of the Combination object for use in JS
+    pub fn get_clone(&self) -> Combination {
+        self.clone()
+    }
+}
