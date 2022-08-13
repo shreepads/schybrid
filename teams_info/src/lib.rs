@@ -436,6 +436,7 @@ mod tests {
         assert!(result.is_some());
         let best_combination = result.unwrap();
         assert_eq!(best_combination.combination_id, 0);
+        assert_eq!(best_combination.first_pref_count, 299);
     }
 
 

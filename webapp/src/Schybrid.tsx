@@ -9,10 +9,10 @@
 import React, {useEffect, useState} from 'react';
 
 import './Schybrid.css';
-import { HeaderComponent } from './Header'
-import { TeamsSetupComponent } from './TeamsSetup'
-import { ScheduleComponent } from './Schedule';
-import { FooterComponent } from './Footer';
+import { HeaderComponent } from './components/Header'
+import { TeamsSetupComponent } from './components/TeamsSetup'
+import { ScheduleComponent } from './components/Schedule';
+import { FooterComponent } from './components/Footer';
 
 import {
   Weekday, 
@@ -24,7 +24,10 @@ import {
 export function SchybridComponent(): JSX.Element {
   
   // Setup teams info init state TeamsInfo[] at random for now
-  const [teamsInfo, setTeamsInfo] = useState(initTeamsInfo());
+  const [teamsInfo, setTeamsInfo] = useState(() => {
+    const initTeamsInfoState = initTeamsInfo();
+    return initTeamsInfoState;
+  });
 
   // Setup seats inint state BigInt
   const [seats, setSeats] = useState(BigInt("65"));
@@ -44,11 +47,11 @@ export function SchybridComponent(): JSX.Element {
 // Array of TeamsInfo randomly generated
 function initTeamsInfo(): TeamInfo[] {
 
-  let teams = [];
+  const teams = [];
 
   // add 20 teams
 
-  let teams_count = 20;
+  const teams_count = 20;
 
   for (let x = 1; x <= teams_count; x++) {
       let team_id = "Team".concat(x.toString());

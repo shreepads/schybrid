@@ -31,6 +31,11 @@ impl TeamInfo {
         }
     }
 
+    // Get clone of the TeamInfo object for use in JS
+    pub fn get_clone(&self) -> TeamInfo {
+        self.clone()
+    }
+
     #[wasm_bindgen(getter)]
     pub fn team_id(&self) -> String {
         self.team_id.clone()

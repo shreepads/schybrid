@@ -20,6 +20,8 @@ export function TeamsSetupComponent(props: { teamsInfo: TeamInfo[] }): JSX.Eleme
   
   let teamsInfo = props.teamsInfo;
 
+  console.log("Rendering teams setup");
+
   return (
     <div className="schybrid-box schybrid-teamssetup">
       <div className="header">
