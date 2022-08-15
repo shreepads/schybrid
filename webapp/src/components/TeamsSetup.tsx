@@ -13,7 +13,8 @@ import {
   Weekday, 
   TeamInfo,
 } from 'teams_sched'
- 
+
+import WEEKDAYSTRS from './Weekdays';
 
 // Teams setup component
 export function TeamsSetupComponent(props: { teamsInfo: TeamInfo[]; handleAddTeam: Function }): JSX.Element {
@@ -47,7 +48,7 @@ function TeamInfoComponent(props: {teamInfo : TeamInfo} ) {
   
   return (
     <div>
-      {`${props.teamInfo.team_id}, ${props.teamInfo.team_size} ppl, pref days: ${props.teamInfo.first_pref}, ${props.teamInfo.second_pref}`}
+      {`${props.teamInfo.team_id}, ${props.teamInfo.team_size} ppl, 1st,2nd pref days: ${WEEKDAYSTRS[props.teamInfo.first_pref]},${WEEKDAYSTRS[props.teamInfo.second_pref]}`}
     </div>
   );
 }
@@ -72,14 +73,17 @@ function AddTeamButton() {
   )
 }
 
+// Range generation utility
+const range = (start: number, stop: number, step: number) => Array.from({ length: (stop - start) / step + 1}, (_, i) => start + (i * step));
+
 // Add team modal form
 function AddTeamModal(props: { handleAddTeam: Function }) {
   
   const [formFields, setFormFields] = useState({
     team_id: "",
     team_size: "",
-    first_pref: "",
-    second_pref: "",
+    first_pref: "1",
+    second_pref: "2",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,11 +98,23 @@ function AddTeamModal(props: { handleAddTeam: Function }) {
       [name]: value,
     });
   }
-  
+
+  const handlePrefChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    let {name, value} = e.target;
+
+    setFormFields({
+      ...formFields,
+      [name]: value,
+    });
+  }
+
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (formFields.team_id && formFields.team_size && formFields.first_pref && formFields.second_pref) {
-      props.handleAddTeam(formFields.team_id, formFields.team_size, formFields.first_pref, formFields.second_pref);
+      if (formFields.first_pref !== formFields.second_pref) {
+        props.handleAddTeam(formFields.team_id, formFields.team_size, formFields.first_pref, formFields.second_pref);
+      }
     }
   }
 
@@ -107,8 +123,8 @@ function AddTeamModal(props: { handleAddTeam: Function }) {
     setFormFields({
       team_id: "",
       team_size: "",
-      first_pref: "",
-      second_pref: "",
+      first_pref: "1",
+      second_pref: "2",
     });
   }
   
@@ -123,6 +139,7 @@ function AddTeamModal(props: { handleAddTeam: Function }) {
           onChange={handleChange}
         />
       </label>
+      <p/>
       <label>
         Team Size
         <input 
@@ -132,24 +149,29 @@ function AddTeamModal(props: { handleAddTeam: Function }) {
           onChange={handleChange}
         />
       </label>
+      <p/>
       <label>
-        First Pref
-        <input 
-          type="text"
-          name="first_pref"
-          value={formFields.first_pref}
-          onChange={handleChange}
-        />
+        1st Preference
+        <select name="first_pref" value={formFields.first_pref} onChange={handlePrefChange}>
+          {range(Weekday.Monday, Weekday.Friday, 1).map(weekday => (
+            <option key={weekday} value={weekday}>
+              {WEEKDAYSTRS[weekday]}
+            </option>
+          ))}
+        </select>
       </label>
+      <p/>
       <label>
-        Second Pref
-        <input 
-          type="text"
-          name="second_pref"
-          value={formFields.second_pref}
-          onChange={handleChange}
-        />
+        2nd Preference
+        <select name="second_pref" value={formFields.second_pref} onChange={handlePrefChange}>
+          {range(Weekday.Monday, Weekday.Friday, 1).map(weekday => (
+            <option key={weekday} value={weekday}>
+              {WEEKDAYSTRS[weekday]}
+            </option>
+          ))}
+        </select>
       </label>
+      <p/>
       <button onClick={handleClear}>
         Clear
       </button>
@@ -159,3 +181,4 @@ function AddTeamModal(props: { handleAddTeam: Function }) {
     </form>
   )
 }
+
