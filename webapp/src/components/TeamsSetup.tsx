@@ -28,7 +28,7 @@ export function TeamsSetupComponent(props: { teamsInfo: TeamInfo[]; handleAddTea
       <h2>
         Teams
       </h2>
-      <AddTeamComponent handleAddTeam={props.handleAddTeam}/>
+      <AddTeamComponent {...props}/>
       <p/>
       <div>
         {
@@ -55,7 +55,7 @@ function TeamInfoComponent(props: {teamInfo : TeamInfo} ) {
 }
 
 // Add team container - button and modal form
-function AddTeamComponent(props: { handleAddTeam: Function }) {
+function AddTeamComponent(props: { teamsInfo: TeamInfo[]; handleAddTeam: Function }) {
   return (
     <div>
       {/*<AddTeamButton/>*/}
@@ -78,7 +78,7 @@ function AddTeamButton() {
 const range = (start: number, stop: number, step: number) => Array.from({ length: (stop - start) / step + 1}, (_, i) => start + (i * step));
 
 // Add team modal form
-function AddTeamModal(props: { handleAddTeam: Function }) {
+function AddTeamModal(props: { teamsInfo: TeamInfo[]; handleAddTeam: Function }) {
   
   const [formFields, setFormFields] = useState({
     team_id: "",
@@ -112,11 +112,24 @@ function AddTeamModal(props: { handleAddTeam: Function }) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Add team only if all fields are non empty, 1st/2nd pref not same and team id unique
     if (formFields.team_id && formFields.team_size && formFields.first_pref && formFields.second_pref) {
       if (formFields.first_pref !== formFields.second_pref) {
-        props.handleAddTeam(formFields.team_id, formFields.team_size, formFields.first_pref, formFields.second_pref);
+        if (!props.teamsInfo.some(teamInfo => teamInfo.team_id === formFields.team_id)) {
+          props.handleAddTeam(formFields.team_id, formFields.team_size, formFields.first_pref, formFields.second_pref);
+          return;
+        } else {
+          console.log("Unable to add team as teamsInfo.some is false")
+        }
+      } else {
+        console.log("Unable to add team as first and second pref are same")
       }
+    } else {
+      console.log("Unable to add team as all fields are not non-empty")
     }
+
+    console.log("Unable to add team, check fields")
   }
 
   const handleClear = (e: React.MouseEvent<HTMLButtonElement>) => {
