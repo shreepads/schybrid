@@ -25,10 +25,11 @@ export function TeamsSetupComponent(props: { teamsInfo: TeamInfo[]; handleAddTea
 
   return (
     <div className="schybrid-box schybrid-teamssetup">
-      <div className="header">
+      <h2>
         Teams
-      </div>
+      </h2>
       <AddTeamComponent handleAddTeam={props.handleAddTeam}/>
+      <p/>
       <div>
         {
           teamsInfo.map(

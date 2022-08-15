@@ -17,9 +17,9 @@ export function HeaderComponent(props: { seats: BigInt; setOnChange: Function })
 
     return (
         <div className="schybrid-box schybrid-header">
-        <div className="header">
+        <h1>
             Schybrid
-        </div>
+        </h1>
         <div>
             <SeatsComponent {...props}/>
         </div>

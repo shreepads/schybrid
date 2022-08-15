@@ -47,9 +47,9 @@ export function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}
 
   return (
     <div className="schybrid-box schybrid-schedule">
-      <div className="header">
+      <h2>
         Schedule
-      </div>
+      </h2>
       <div>
         <ScheduleMetrics combination={bestValidCombination}/>
         <Schedule schedules={teamsSchedule}/>
