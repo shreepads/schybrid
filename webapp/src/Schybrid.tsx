@@ -29,13 +29,18 @@ export function SchybridComponent(): JSX.Element {
     return initTeamsInfoState;
   });
 
+  const addTeam = (team_id: string, team_size: bigint, first_pref: number, second_pref: number) => {
+    let newteaminfo = new TeamInfo(team_id, team_size, first_pref, second_pref);
+    setTeamsInfo(oldTeamsInfo => [...oldTeamsInfo, newteaminfo]);
+  }
+
   // Setup seats inint state BigInt
-  const [seats, setSeats] = useState(BigInt("65"));
+  const [seats, setSeats] = useState(BigInt("25"));
   
   return (
     <div className="schybrid-grid">
       <HeaderComponent seats={seats} setOnChange={setSeats}/> 
-      <TeamsSetupComponent teamsInfo={teamsInfo} />
+      <TeamsSetupComponent teamsInfo={teamsInfo} handleAddTeam={addTeam}/>
       <ScheduleComponent seats={seats} teamsInfo={teamsInfo}/>
       <FooterComponent/>
     </div>
@@ -49,9 +54,9 @@ function initTeamsInfo(): TeamInfo[] {
 
   const teams = [];
 
-  // add 20 teams
+  // add 5 teams
 
-  const teams_count = 20;
+  const teams_count = 5;
 
   for (let x = 1; x <= teams_count; x++) {
       let team_id = "Team".concat(x.toString());
