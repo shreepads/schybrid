@@ -20,6 +20,7 @@ import {
   TeamsSchedule,
 } from 'teams_sched'
 
+import WEEKDAYSTRS from './Weekdays';
 
 // Schedule output component
 export function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}): JSX.Element {
@@ -72,7 +73,7 @@ function ScheduleMetrics(props: {combination: Combination | undefined}) {
     )
   } else {
     return (
-      <div>"No valid combination"</div>
+      <div>No valid combination, add seats or change preferences</div>
     )
   }
 }
@@ -104,7 +105,7 @@ function TeamScheduleComponent(props: {teamSched: TeamSchedule | undefined}) {
   if (props.teamSched) {
     return(
       <div>
-        {`${props.teamSched.team_id}, allocated day ${props.teamSched.allocated_day}`}
+        {`${props.teamSched.team_id}, allocated day ${WEEKDAYSTRS[props.teamSched.allocated_day]}`}
       </div>
     )
   } else {
