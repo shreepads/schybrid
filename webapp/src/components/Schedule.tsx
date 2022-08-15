@@ -52,6 +52,7 @@ export function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}
       </h2>
       <div>
         <ScheduleMetrics combination={bestValidCombination}/>
+        <p/>
         <Schedule schedules={teamsSchedule}/>
       </div>
     </div>

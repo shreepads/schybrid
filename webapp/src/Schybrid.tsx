@@ -41,7 +41,7 @@ export function SchybridComponent(): JSX.Element {
     <div className="schybrid-grid">
       <HeaderComponent seats={seats} setOnChange={setSeats}/> 
       <TeamsSetupComponent teamsInfo={teamsInfo} handleAddTeam={addTeam}/>
-      {/*<ScheduleComponent seats={seats} teamsInfo={teamsInfo}/>*/}
+      <ScheduleComponent seats={seats} teamsInfo={teamsInfo}/>
       <FooterComponent/>
     </div>
   );
