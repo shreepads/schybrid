@@ -109,12 +109,17 @@ function Schedule(props: {schedules: TeamSchedule[]}) {
 
 // Team schedule disply
 function TeamScheduleComponent(props: {teamSched: TeamSchedule | undefined}) {
+  
   if (props.teamSched) {
+    
+    let prefmarker = (props.teamSched.allocated_pref === AllocatedPreference.First) ? "*" : "";
+    
     return(
       <div>
-        {`${props.teamSched.team_id}, allocated day ${WEEKDAYSTRS[props.teamSched.allocated_day]}`}
+        {`${props.teamSched.team_id}, allocated day ${WEEKDAYSTRS[props.teamSched.allocated_day]} ${prefmarker}`}
       </div>
     )
+
   } else {
     return(<div></div>)
   }
