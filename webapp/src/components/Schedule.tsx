@@ -51,7 +51,7 @@ export function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}
         Schedule
       </h2>
       <div>
-        <ScheduleMetrics combination={bestValidCombination}/>
+        <ScheduleMetrics combination={bestValidCombination} teamsInfo={props.teamsInfo}/>
         <p/>
         <Schedule schedules={teamsSchedule}/>
       </div>
@@ -61,20 +61,26 @@ export function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}
 
 
 // Metrics for the combination
-function ScheduleMetrics(props: {combination: Combination | undefined}) {
+function ScheduleMetrics(props: {combination: Combination | undefined; teamsInfo : TeamInfo[]}) {
   
   console.log("Rendering schedule metrics");
+
+  const totalPeople = props.teamsInfo.reduce((total, teamInfo)=> total + teamInfo.team_size, BigInt(0));
   
   // Check if there is a valid combination
   if (props.combination) {
     return (
       <div>
-        {`People getting 1st pref: ${props.combination.first_pref_count}`}
+        {`People getting 1st pref: ${props.combination.first_pref_count}/${totalPeople}`}
       </div>
     )
   } else {
     return (
-      <div>No valid combination, add seats or change preferences</div>
+      <div>
+        {`People getting 1st pref: 0/${totalPeople}`}
+        <p/>
+        No valid combination, add seats or change preferences
+      </div>
     )
   }
 }
