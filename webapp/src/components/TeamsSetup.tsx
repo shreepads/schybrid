@@ -17,7 +17,7 @@ import {
 import WEEKDAYSTRS from './Weekdays';
 
 // Teams setup component
-export function TeamsSetupComponent(props: { teamsInfo: TeamInfo[]; handleAddTeam: Function }): JSX.Element {
+export function TeamsSetupComponent(props: { teamsInfo: TeamInfo[]; handleAddTeam: Function; handleRemoveTeam: Function }): JSX.Element {
   
   let teamsInfo = props.teamsInfo;
 
@@ -28,12 +28,12 @@ export function TeamsSetupComponent(props: { teamsInfo: TeamInfo[]; handleAddTea
       <h2>
         Teams
       </h2>
-      <AddTeamComponent {...props}/>
+      <AddTeamComponent teamsInfo={props.teamsInfo} handleAddTeam={props.handleAddTeam}/>
       <p/>
       <div>
         {
           teamsInfo.map(
-            (teaminfo, i) => <TeamInfoComponent key={i} teamInfo={teaminfo}/>
+            (teaminfo, i) => <TeamInfoComponent key={teaminfo.team_id} teamInfo={teaminfo} handleRemoveTeam={props.handleRemoveTeam}/>
           )
         }
       </div>
@@ -43,13 +43,16 @@ export function TeamsSetupComponent(props: { teamsInfo: TeamInfo[]; handleAddTea
 
 
 // Team info component
-function TeamInfoComponent(props: {teamInfo : TeamInfo} ) {
+function TeamInfoComponent(props: {teamInfo : TeamInfo; handleRemoveTeam: Function} ) {
   
   //console.log(`Rendering team ${props.teamInfo.team_id}`);
   
   return (
     <div>
-      {`${props.teamInfo.team_id}, ${props.teamInfo.team_size} ppl, 1st,2nd pref days: ${WEEKDAYSTRS[props.teamInfo.first_pref]},${WEEKDAYSTRS[props.teamInfo.second_pref]}`}
+      {`${props.teamInfo.team_id}, ${props.teamInfo.team_size} ppl, 1st,2nd pref days: ${WEEKDAYSTRS[props.teamInfo.first_pref]},${WEEKDAYSTRS[props.teamInfo.second_pref]} `}
+      <button type="button" onClick={() => props.handleRemoveTeam(props.teamInfo.team_id)}>
+        Del
+      </button>
     </div>
   );
 }
@@ -186,7 +189,7 @@ function AddTeamModal(props: { teamsInfo: TeamInfo[]; handleAddTeam: Function })
         </select>
       </label>
       <p/>
-      <button onClick={handleClear}>
+      <button type="button" onClick={handleClear}>
         Clear
       </button>
       <button type="submit">

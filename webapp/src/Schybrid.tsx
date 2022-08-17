@@ -34,13 +34,18 @@ export function SchybridComponent(): JSX.Element {
     setTeamsInfo(oldTeamsInfo => [...oldTeamsInfo, newteaminfo]);
   }
 
+  const removeTeam = (rem_team_id: string) => {
+    const newTeamsInfo = teamsInfo.filter((teamInfo) => teamInfo.team_id !== rem_team_id);
+    setTeamsInfo(newTeamsInfo);
+  }
+
   // Setup seats inint state BigInt
   const [seats, setSeats] = useState(BigInt("25"));
   
   return (
     <div className="schybrid-grid">
       <HeaderComponent seats={seats} setOnChange={setSeats}/> 
-      <TeamsSetupComponent teamsInfo={teamsInfo} handleAddTeam={addTeam}/>
+      <TeamsSetupComponent teamsInfo={teamsInfo} handleAddTeam={addTeam} handleRemoveTeam={removeTeam}/>
       <ScheduleComponent seats={seats} teamsInfo={teamsInfo}/>
       <FooterComponent/>
     </div>

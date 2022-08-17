@@ -32,6 +32,11 @@ export function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}
 
   useEffect(() => {
 
+    // do nothing if teamsInfo is empty
+    if (props.teamsInfo.length === 0) {
+      return;
+    }
+    
     const [best_valid_combination, teams_schedule] = computeBestCombinationSchedule(props.seats, props.teamsInfo);
 
     setBestValidCombination(best_valid_combination);
@@ -42,7 +47,14 @@ export function ScheduleComponent(props: {seats: BigInt; teamsInfo : TeamInfo[]}
   
   // if teamsInfo is empty return empty
   if (props.teamsInfo.length === 0) {
-    return(<div>No teams to schedule</div>);
+    return(
+      <div className="schybrid-box schybrid-schedule">
+        <h2>
+          Schedule
+        </h2>
+        <div>No teams to schedule</div>
+      </div>
+    );
   }
 
   return (
