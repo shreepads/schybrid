@@ -121,6 +121,12 @@ function AddTeamModal(props: { teamsInfo: TeamInfo[]; handleAddTeam: Function })
       if (formFields.first_pref !== formFields.second_pref) {
         if (!props.teamsInfo.some(teamInfo => teamInfo.team_id === formFields.team_id)) {
           props.handleAddTeam(formFields.team_id, formFields.team_size, formFields.first_pref, formFields.second_pref);
+          setFormFields({
+            team_id: "",
+            team_size: "",
+            first_pref: "1",
+            second_pref: "2",
+          });
           return;
         } else {
           console.log("Unable to add team as teamsInfo.some is false")
