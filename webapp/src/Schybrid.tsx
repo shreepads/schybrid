@@ -40,7 +40,7 @@ export function SchybridComponent(): JSX.Element {
   }
 
   // Setup seats inint state BigInt
-  const [seats, setSeats] = useState(BigInt("25"));
+  const [seats, setSeats] = useState(BigInt("40"));
   
   return (
     <div className="schybrid-grid">
@@ -59,34 +59,38 @@ function initTeamsInfo(): TeamInfo[] {
 
   const teams = [];
 
-  // add 5 teams
+  // add 10 teams across 3 BUs
 
-  const teams_count = 5;
+  const teams_count = 10;
+  const bu_count = 3;
 
   for (let x = 1; x <= teams_count; x++) {
-      let team_id = "Team".concat(x.toString());
-
-      // Random team size between 10 and 20
-      let min = Math.ceil(10);
-      let max = Math.floor(20);
-      let team_size = BigInt(Math.floor(Math.random() * (max - min + 1) + min)); 
-
-      // random first day pref
-      let weekdays = [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday, Weekday.Thursday, Weekday.Friday];
-      let first_pref_index = (Math.random() * weekdays.length) | 0;
-      let first_pref = weekdays[first_pref_index];
-
-      // random second day pref
-      weekdays.splice(first_pref_index, 1);
-      let second_pref_index = (Math.random() * weekdays.length) | 0;
-      let second_pref = weekdays[second_pref_index];
-
-      let teaminfo = new TeamInfo(team_id, team_size, first_pref, second_pref);
-      //console.log(teaminfo.toJSON());
       
-      // Add to teams
-      teams.push(teaminfo);
-      //console.log(teams.combinations);
+    let bu_id = "BU".concat((Math.floor((x-1)/(bu_count)) + 1).toString());
+    let team_no = 1 + ((x-1) % Math.floor(teams_count/bu_count));
+    let team_id = bu_id.concat(".Team".concat(team_no.toString()));
+
+    // Random team size between 10 and 20
+    let min = Math.ceil(10);
+    let max = Math.floor(20);
+    let team_size = BigInt(Math.floor(Math.random() * (max - min + 1) + min)); 
+
+    // random first day pref
+    let weekdays = [Weekday.Monday, Weekday.Tuesday, Weekday.Wednesday, Weekday.Thursday, Weekday.Friday];
+    let first_pref_index = (Math.random() * weekdays.length) | 0;
+    let first_pref = weekdays[first_pref_index];
+
+    // random second day pref
+    weekdays.splice(first_pref_index, 1);
+    let second_pref_index = (Math.random() * weekdays.length) | 0;
+    let second_pref = weekdays[second_pref_index];
+
+    let teaminfo = new TeamInfo(team_id, team_size, first_pref, second_pref);
+    //console.log(teaminfo.toJSON());
+    
+    // Add to teams
+    teams.push(teaminfo);
+    //console.log(teams.combinations);
   }
 
   console.log("Randomly inited teams");
