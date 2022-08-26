@@ -12,7 +12,7 @@ import './Footer.css';
 export function FooterComponent(): JSX.Element {
   return (
     <div className="schybrid-box schybrid-footer">
-      Copyright, License, Github, Privacy
+      Copyright  |  License  |  Github  |  Privacy
     </div>
   )
 }

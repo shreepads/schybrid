@@ -129,7 +129,7 @@ function AddTeamModal(props: { teamsInfo: TeamInfo[]; handleAddTeam: Function })
           });
           return;
         } else {
-          console.log("Unable to add team as teamsInfo.some is false")
+          console.log("Unable to add team as team id is not unique")
         }
       } else {
         console.log("Unable to add team as first and second pref are same")

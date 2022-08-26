@@ -13,18 +13,21 @@
 // Header
 export function HeaderComponent(props: { seats: BigInt; setOnChange: Function }): JSX.Element {
 
-    console.log("Rendering header");
+  console.log("Rendering header");
 
-    return (
-        <div className="schybrid-box schybrid-header">
-        <h1>
-            Schybrid
-        </h1>
-        <div>
-            <SeatsComponent {...props}/>
-        </div>
-        </div>
-    );
+  return (
+    <div className="schybrid-box schybrid-header">
+      <div className="schybrid-helpsettings">
+        Help  |  Settings
+      </div>
+      <h1>
+        Schybrid
+      </h1>
+      <div>
+        <SeatsComponent {...props}/>
+      </div>
+    </div>
+  );
 }
 
 // Seats input

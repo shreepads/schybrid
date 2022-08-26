@@ -91,7 +91,7 @@ function ScheduleMetrics(props: {combination: Combination | undefined; teamsInfo
       <div>
         {`People getting 1st pref: 0/${totalPeople}`}
         <p/>
-        No valid combination, add seats or change preferences
+        No valid combination, add seats or change teams setup
       </div>
     )
   }
@@ -114,6 +114,8 @@ function Schedule(props: {schedules: TeamSchedule[]}) {
           (teamsched, i) => <TeamScheduleComponent key={i} teamSched={teamsched}/>
         )
       }
+      <p/>
+      * 1st preference allocated
     </div>
   )
 }
